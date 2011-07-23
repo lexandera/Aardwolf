@@ -11,15 +11,15 @@
 var config = {};
 
 /* Full path to directory holding JS source files you wish to debug */
-config.jsFileServerPort = 8500;
 config.jsFileServerBaseDir = '';
-
+/* Port on which JS files will be served */
+config.jsFileServerPort = 8500;
 
 
 
 module.exports = config;
 
-
+/* Load overrides from config.local.js if it exists */
 var path = require('path');
 var localConf = path.join(__dirname, 'config.local.js');
 if (path.existsSync(localConf)) {
