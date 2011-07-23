@@ -1,0 +1,15 @@
+
+
+Aardwolf is a remote JavaScript debugger for Android/iOS and is written in JavaScript.
+
+It consists of the following parts:
+- a code rewriter which injects debug info into your existing source code
+- a debug library which can break execution of your scripts, report execution progress, evaluate code, etc.
+- a UI for setting breakpoints, stepping through code and seeing the current position within the script
+- a server for communication between the debug library and the UI
+
+
+In order to run the server and the code rewriter you will need Node.js:
+- Get it here: http://nodejs.org/#download
+
+
