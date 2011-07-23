@@ -9,6 +9,7 @@
  */
 
 var config = {};
+var path = require('path');
 
 /* Hostname or IP of the local machine */
 config.serverHost = '';
@@ -16,7 +17,7 @@ config.serverHost = '';
 config.serverPort = 8000;
 
 /* Full path to directory holding JS source files you wish to debug */
-config.jsFileServerBaseDir = '';
+config.jsFileServerBaseDir = path.join(__dirname, '../samples');
 /* Port on which JS files will be served */
 config.jsFileServerPort = 8500;
 
@@ -25,7 +26,6 @@ config.jsFileServerPort = 8500;
 module.exports = config;
 
 /* Load overrides from config.local.js if it exists */
-var path = require('path');
 var localConf = path.join(__dirname, 'config.local.js');
 if (path.existsSync(localConf)) {
     require(localConf);

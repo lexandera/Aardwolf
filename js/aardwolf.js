@@ -2,7 +2,8 @@
 window.Aardwolf = new function() {
     var serverHost = '__SERVER_HOST__';
     var serverPort = __SERVER_PORT__;
-    var serverUrl = 'http://'+serverHost+':'+serverPort
+    var serverUrl = 'http://' + serverHost + ':' + serverPort
+    var breakpoints = {};
     
     function sendToServer(path, payload) {
         req = new XMLHttpRequest();
@@ -26,16 +27,24 @@ window.Aardwolf = new function() {
     this.init = function() {
         replaceConsole();
     };
-
+    
     this.updatePosition = function(file, line) {
-        sendToServer('/console', { type: 'POSITION', message: file+', line '+line });
+        var breakpoint = breakpoints[file] && breakpoints[file][line];
+        if (breakpoint) {
+            sendToServer('/console', { type: 'POSITION', message: file+', line ' + line });
+        }
     };
     
-    this.returnEvalResult = function(result) {
-        
+    this.doEval = function(evalFunc) {
+        var aardwolfEvalResult;
+        try {
+            aardwolfEvalResult = evalFunc();
+        } catch (ex) {
+            aardwolfEvalResult = 'ERROR: ' + ex.toString();
+        }
+        sendToServer('/console', { type: 'EVAL', message: aardwolfEvalResult });
     };
     
 };
 
 Aardwolf.init();
-

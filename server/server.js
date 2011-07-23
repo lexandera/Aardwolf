@@ -6,6 +6,11 @@ var fs = require('fs');
 var config = require('../config/config.defaults.js');
 var jsrewriter = require('../jsrewriter/jsrewriter.js');
 
+if (!path.existsSync(config.jsFileServerBaseDir)) {
+    console.error('ERROR: Path does not exist: ' + config.jsFileServerBaseDir);
+    process.exit(1);
+}
+
 /* Server for web service ports and debugger UI */
 http.createServer(AardwolfServer).listen(config.serverPort, null, function() {
     console.log('Server listening for requests on port '+config.serverPort+'.');
@@ -49,7 +54,7 @@ function DebugFileServer(req, res) {
     var fullRequestedFilePath = path.join(jsFileServerBaseDir, requestedFile);
     
     /* alias for serving the debug library */
-    if (requestedFile == '/aardwolf.js') {
+    if (requestedFile.toLowerCase() == '/aardwolf.js') {
         var js = fs.readFileSync(path.join(__dirname, '../js/aardwolf.js'))
             .toString()
             .replace('__SERVER_HOST__', config.serverHost)
@@ -66,7 +71,8 @@ function DebugFileServer(req, res) {
         js = jsrewriter.addDebugStatements(requestedFile, js);
         res.writeHead(200, {'Content-Type': 'application/javascript'});
         res.end(js);
-    } else {
+    }
+    else {
         res.writeHead(404, {'Content-Type': 'text/plain'});
         res.end('NOT FOUND');
     }
