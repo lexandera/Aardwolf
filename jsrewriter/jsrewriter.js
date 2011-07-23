@@ -7,7 +7,8 @@ function addDebugStatements(filePath, text) {
     var out = [];
     lines.forEach(function(line, i) {
         if (line.match(/[a-zA-Z0-9=,.]/i)) {
-            out.push(buildDebugStatement(filePath, i+1));
+            var isDebuggerStatement = line.match(/^\s*\bdebugger\b/);
+            out.push(buildDebugStatement(filePath, i+1, isDebuggerStatement));
         }
         out.push(line);
     });
@@ -16,11 +17,19 @@ function addDebugStatements(filePath, text) {
 
 var debugStatementStart = "/*AARDWOLF_DEBUG_BEGIN*/";
 var debugStatementEnd = "/*AARDWOLF_DEBUG_END*/";
-var debugStatementTemplate = fs.readFileSync(path.join(__dirname, '../js/debug-template.js')).toString();
+var debugStatementTemplate = fs.readFileSync(path.join(__dirname, '../js/debug-template.js'))
+    .toString()
+//!    .trim()
+//!    .split('\n')
+//!    .map(function(s) { return s.trim(); })
+//!    .join('');
 
-function buildDebugStatement(file, line) {
+function buildDebugStatement(file, line, isDebuggerStatement) {
     return  debugStatementStart +
-            debugStatementTemplate.replace('__FILE__', file).replace('__LINE__', line) +
+            debugStatementTemplate
+                .replace('__FILE__', file)
+                .replace('__LINE__', line)
+                .replace('__DEBUGGER__', isDebuggerStatement ? 'true' : 'false') +
             debugStatementEnd;
 }
 

@@ -1,8 +1,8 @@
 
 (function() {
-    var aardwolfCmd = Aardwolf.updatePosition("__FILE__", __LINE__);
-    if (aardwolfCmd && aardwolfCmd.command == "eval") {
-        Aardwolf.doEval(function() { return eval(aardwolfCmd.data); });
+    var aardwolfEvalCmd = Aardwolf.updatePosition("__FILE__", __LINE__, __DEBUGGER__);
+    if (typeof aardwolfEvalCmd != 'undefined') {
+        Aardwolf.doEval(function() { return eval(aardwolfEvalCmd.data); });
         arguments.callee();
     }
 })();

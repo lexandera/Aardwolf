@@ -22,6 +22,8 @@ http.createServer(DebugFileServer).listen(config.jsFileServerPort, null, functio
 });
 
 
+var evals = [];
+
 function AardwolfServer(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     
@@ -35,6 +37,36 @@ function AardwolfServer(req, res) {
                 printConsoleMessage(data);
                 break;
                 
+            case '/init':
+                // TODO: un-hardcode; get from debug ui
+                evals = [{ command: 'eval', data: '7*4' },
+                         { command: 'eval', data: 'x * y' },
+                         { command: 'eval', data: '"foo".toUpperCase()' },
+                         { command: 'eval', data: 'foo + bar' }];
+                
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                
+                // TODO: un-hardcode; get breakpoints from debug ui
+                res.end(JSON.stringify({
+                    command: 'set-breakpoints',
+                    data: { '/sample1.js': { 3: true } }
+                }));
+                
+                break;
+                
+            case '/breakpoint':
+                // TODO: do not continue automatically
+            
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                var ev = evals.pop();
+                if (ev) {
+                    res.end(JSON.stringify(ev));
+                } else {
+                    res.end('{}');
+                }
+                    
+                break;
+                
             default:
                 res.writeHead(404, {'Content-Type': 'text/plain'});
                 res.end('NOT FOUND');
@@ -44,7 +76,7 @@ function AardwolfServer(req, res) {
     function printConsoleMessage(data) {
         console.log('CONSOLE ' + data.type + ': '+data.message);
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end();
+        res.end(JSON.stringify({}));
     }
 }
 
