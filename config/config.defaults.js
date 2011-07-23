@@ -10,6 +10,11 @@
 
 var config = {};
 
+/* Hostname or IP of the local machine */
+config.serverHost = '';
+/* port on which the server listens for requests */
+config.serverPort = 8000;
+
 /* Full path to directory holding JS source files you wish to debug */
 config.jsFileServerBaseDir = '';
 /* Port on which JS files will be served */
