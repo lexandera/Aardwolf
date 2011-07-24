@@ -46,7 +46,7 @@ function listenToServer() {
     
     req.onreadystatechange = function () {
         if (req.readyState == 4) {
-            writeOutput(req.responseText);
+            writeOutput(JSON.parse(req.responseText));
             listenToServer();
         }
     };
@@ -54,6 +54,22 @@ function listenToServer() {
 }
 
 var lineNum = 0;
-function writeOutput(msg) {
+function writeOutput(data) {
+    var msg = '';
+    
+    switch (data.command) {
+        case 'print-message': 
+        msg = data.type + ': ' + data.message;
+            break;
+        case 'print-eval-result':
+            msg = 'EVAL INPUT: ' + data.input + ' RESULT: ' + data.result;
+            break;
+        case 'report-breakpoint':
+            msg = 'BREAKING AT: ' + data.file + ', line ' + data.line;
+            break;
+    }
+    
     $('<div></div>').text((++lineNum) +': ' +msg).prependTo($('#output'));
 }
+
+

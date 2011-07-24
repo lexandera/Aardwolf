@@ -22,7 +22,7 @@ window.Aardwolf = new (function() {
             window.console[f] = function() {
                 var args = Array.prototype.slice.call(arguments);
                 var out = oldFunc.apply(window.console, args);
-                sendToServer('/console', { type: f.toUpperCase(), message: args.toString() });
+                sendToServer('/console', { command: 'print-message', type: f.toUpperCase(), message: args.toString() });
                 return out; 
             };
         });
@@ -59,7 +59,7 @@ window.Aardwolf = new (function() {
         } catch (ex) {
             evalResult = 'ERROR: ' + ex.toString();
         }  
-        sendToServer('/console', { type: 'EVAL', message: evalResult });
+        sendToServer('/console', { command: 'print-eval-result', input: cmd.data, result: evalResult });
     };
     
     
@@ -78,7 +78,7 @@ window.Aardwolf = new (function() {
                 return;
             }
             
-            var cmd = sendToServer('/breakpoint', { file: file, line: line });
+            var cmd = sendToServer('/breakpoint', { command: 'report-breakpoint', file: file, line: line });
             if (!cmd) {
                 return;
             }                
