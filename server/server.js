@@ -12,8 +12,8 @@ function run() {
     });
 }
 
-var mobileDispatcher = new Dispatcher('mobile');
-var desktopDispatcher = new Dispatcher('desktop');
+var mobileDispatcher = new Dispatcher();
+var desktopDispatcher = new Dispatcher();
 
 function AardwolfServer(req, res) {
     res.setHeader('Cache-Control', 'no-cache');
@@ -97,7 +97,7 @@ function AardwolfServer(req, res) {
 }
 
 
-function Dispatcher(pfx) {
+function Dispatcher() {
     var queue = [];
     var client;
     
