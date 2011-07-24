@@ -10,8 +10,8 @@ function run() {
     });
 }
 
-
-var evals = [];
+var mobileDispatcher = new Dispatcher('mobile');
+var desktopDispatcher = new Dispatcher('desktop');
 
 function AardwolfServer(req, res) {
     res.setHeader('Cache-Control', 'no-cache');
@@ -20,49 +20,43 @@ function AardwolfServer(req, res) {
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     
+    var body = '';
+    
     if (req.method == 'OPTIONS') {
         res.end();
         return;
+    } else if (req.method == 'POST') {
+        req.on('data', function (chunk) { body += chunk; });
+        req.on('end', function () { processPostedData(JSON.parse(body)); });
+    } else {
+        processPostedData({});
     }
     
-    var body = '';
-    req.on('data', function (chunk) { body += chunk; });
-    req.on('end', function () { processPostedData(JSON.parse(body)); });
     
     function processPostedData(data) {
         switch (req.url) {
-            case '/console':
-                printConsoleMessage(data);
+            case '/mobile/init':
+                mobileDispatcher.setClient(res);
                 break;
                 
-            case '/init':
-                // TODO: un-hardcode; get from debug ui
-                evals = [{ command: 'eval', data: '7*4' },
-                         { command: 'eval', data: 'x * y' },
-                         { command: 'eval', data: '"foo".toUpperCase()' },
-                         { command: 'eval', data: 'foo + bar' }];
-                
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                
-                // TODO: un-hardcode; get breakpoints from debug ui
-                res.end(JSON.stringify({
-                    command: 'set-breakpoints',
-                    data: { '/sample1.js': { 5: true } }
-                }));
-                
+            case '/mobile/console':
+                console.log('CONSOLE ' + data.type + ': '+data.message);
+                desktopDispatcher.addMessage(data);
+                ok200();
                 break;
                 
-            case '/breakpoint':
-                // TODO: do not continue automatically
-            
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                var ev = evals.shift();
-                if (ev) {
-                    res.end(JSON.stringify(ev));
-                } else {
-                    res.end('{}');
-                }
-                    
+            case '/mobile/breakpoint':
+                desktopDispatcher.addMessage(data);
+                mobileDispatcher.setClient(res);
+                break;
+                
+            case '/desktop/outgoing':
+                mobileDispatcher.addMessage(data);
+                ok200();
+                break;
+                
+            case '/desktop/incoming':
+                desktopDispatcher.setClient(res);
                 break;
                 
             default:
@@ -71,10 +65,38 @@ function AardwolfServer(req, res) {
         }
     }
     
-    function printConsoleMessage(data) {
-        console.log('CONSOLE ' + data.type + ': '+data.message);
+    function ok200() {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({}));
+    }
+}
+
+
+function Dispatcher(pfx) {
+    var queue = [];
+    var client;
+    
+    this.setClient = function(c) {
+        console.log(pfx + ' set client ');
+        client = c;
+        process();
+    };
+    
+    this.addMessage = function(m) {
+        console.log(pfx + ' add msg ' + m);
+        queue.push(m);
+        process();
+    };
+    
+    function process() {
+        console.log(pfx + ' process');
+        if (client && queue.length > 0) {
+            client.writeHead(200, { 'Content-Type': 'application/json' });
+            var msg = queue.shift();
+            client.end(JSON.stringify(msg));
+            console.log(pfx + ' processed message '+msg);
+            client = null;
+        }
     }
 }
 

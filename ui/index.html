@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aardwolf UI</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script type="text/javascript" src="ui.js"></script>
+        
+        <style>
+            textarea {
+                width: 75%;
+                font-family: "Courier New";
+                font-size: 14px;
+            }
+        
+            #output {
+                background: #eee;
+                font-family: "Courier New";
+                font-size: 14px;
+            }
+            
+            #output div {
+                border-bottom: 1px solid #bbb;
+                padding: 3px;
+            }
+        
+        </style>
+        <script></script>
+    </head>
+    
+    <body>
+        Breakpoints:<br/>
+        <textarea id="breakpoints"></textarea>
+        
+        <br/>
+        
+        Console:<br/>
+        <textarea id="eval"></textarea>
+        <br/>
+        <button id="btn-eval">eval()</button>
+        
+        <br/><br/>
+        
+        <button id="btn-start">START</button> &nbsp;&nbsp;&nbsp;&nbsp;
+        <button id="btn-continue">continue</button>
+        <button id="btn-step">step</button>
+    
+        
+        <br/><br/>
+        Output: <br/>
+        <div id="output">
+        </div>
+    </body>
+</html>
+

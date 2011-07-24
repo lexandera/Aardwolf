@@ -9,10 +9,9 @@ window.Aardwolf = new (function() {
     
     function sendToServer(path, payload) {
         var req = new XMLHttpRequest();
-        req.open('POST', serverUrl+path, false);
-        req.setRequestHeader('Content-Type', 'application/json')
+        req.open('POST', serverUrl + '/mobile' + path, false);
+        req.setRequestHeader('Content-Type', 'application/json');
         req.send(JSON.stringify(payload));
-        
         return JSON.parse(req.responseText);
     }
     
@@ -29,22 +28,40 @@ window.Aardwolf = new (function() {
         });
     }
     
-    
     function processCommand(cmd) {
         switch (cmd.command) {
             case 'set-breakpoints':
-                breakpoints = cmd.data;
+                breakpoints = {};
+                cmd.data.forEach(function(bp) {
+                    var file = bp[0];
+                    var line = bp[1];
+                    if (!breakpoints[file]) {
+                        breakpoints[file] = {};
+                    }
+                    breakpoints[file][line] = true;
+                });
                 return true;
                 
-            case 'run':
+            case 'breakpoint-continue':
                 breakOnNext = false;
                 return false;
             
-            case 'step':
+            case 'breakpoint-step':
                 breakOnNext = true;
                 return false;
         }
     }
+    
+    function doEval(evalScopeFunc, cmd) {
+        var evalResult;
+        try {
+            evalResult = evalScopeFunc(cmd.data);
+        } catch (ex) {
+            evalResult = 'ERROR: ' + ex.toString();
+        }  
+        sendToServer('/console', { type: 'EVAL', message: evalResult });
+    };
+    
     
     this.init = function() {
         replaceConsole();
@@ -76,16 +93,6 @@ window.Aardwolf = new (function() {
                 }
             }
         }
-    };
-    
-    function doEval(evalScopeFunc, cmd) {
-        var evalResult;
-        try {
-            evalResult = evalScopeFunc(cmd.data);
-        } catch (ex) {
-            evalResult = 'ERROR: ' + ex.toString();
-        }  
-        sendToServer('/console', { type: 'EVAL', message: evalResult });
     };
     
 })();
