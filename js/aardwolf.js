@@ -1,15 +1,18 @@
 
-window.Aardwolf = new function() {
+window.Aardwolf = new (function() {
     var serverHost = '__SERVER_HOST__';
-    var serverPort = __SERVER_PORT__;
+    var serverPort = '__SERVER_PORT__';
     var serverUrl = 'http://' + serverHost + ':' + serverPort;
     
     var breakpoints = {};
+    var breakOnNext = false;
     
     function sendToServer(path, payload) {
-        req = new XMLHttpRequest();
+        var req = new XMLHttpRequest();
         req.open('POST', serverUrl+path, false);
+        req.setRequestHeader('Content-Type', 'application/json')
         req.send(JSON.stringify(payload));
+        
         return JSON.parse(req.responseText);
     }
     
@@ -26,53 +29,65 @@ window.Aardwolf = new function() {
         });
     }
     
-    function processCommandFromServer(cmd) {
-        if (cmd.command == 'set-breakpoints') {
-            breakpoints = cmd.data;
+    
+    function processCommand(cmd) {
+        switch (cmd.command) {
+            case 'set-breakpoints':
+                breakpoints = cmd.data;
+                return true;
+                
+            case 'run':
+                breakOnNext = false;
+                return false;
+            
+            case 'step':
+                breakOnNext = true;
+                return false;
         }
     }
     
     this.init = function() {
         replaceConsole();
         var cmd = sendToServer('/init', {});
-        if (cmd && cmd.command) {
-            processCommandFromServer(cmd);
+        if (cmd) {
+            processCommand(cmd)
         }
     };
     
-    this.updatePosition = function(file, line, isDebuggerStatement) {
+    this.updatePosition = function(file, line, isDebuggerStatement, evalScopeFunc) {
         while (true) {
-            var breakpoint = (breakpoints[file] && breakpoints[file][line]) || isDebuggerStatement;
-            if (breakpoint) {
-                var cmd = sendToServer('/breakpoint', { file: file, line: line });
+            var shouldBreak = (breakpoints[file] && breakpoints[file][line]) || isDebuggerStatement || breakOnNext;
+            if (!shouldBreak) {
+                return;
+            }
+            
+            var cmd = sendToServer('/breakpoint', { file: file, line: line });
+            if (!cmd) {
+                return;
+            }                
                 
-                if (cmd && cmd.command) {
-                    if (cmd.command == 'eval') {
-                        /* pass eval to debug loop which called updatePosition() */
-                        return cmd;
-                    }
-                    else {
-                        processCommandFromServer(cmd);
-                    }
-                } else {
-                    break;
+            if (cmd.command == 'eval') {
+                doEval(evalScopeFunc, cmd);
+            }
+            else {
+                var isInternalCommand = processCommand(cmd);
+                if (!isInternalCommand) {
+                    return;
                 }
-            } else {
-                break;
             }
         }
     };
     
-    this.doEval = function(evalFunc) {
-        var aardwolfEvalResult;
+    function doEval(evalScopeFunc, cmd) {
+        var evalResult;
         try {
-            aardwolfEvalResult = evalFunc();
+            evalResult = evalScopeFunc(cmd.data);
         } catch (ex) {
-            aardwolfEvalResult = 'ERROR: ' + ex.toString();
-        }
-        sendToServer('/console', { type: 'EVAL', message: aardwolfEvalResult });
+            evalResult = 'ERROR: ' + ex.toString();
+        }  
+        sendToServer('/console', { type: 'EVAL', message: evalResult });
     };
     
-};
+})();
 
 Aardwolf.init();

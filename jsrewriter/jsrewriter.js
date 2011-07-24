@@ -15,22 +15,13 @@ function addDebugStatements(filePath, text) {
     return out.join('\n');
 }
 
-var debugStatementStart = "/*AARDWOLF_DEBUG_BEGIN*/";
-var debugStatementEnd = "/*AARDWOLF_DEBUG_END*/";
-var debugStatementTemplate = fs.readFileSync(path.join(__dirname, '../js/debug-template.js'))
-    .toString()
-//!    .trim()
-//!    .split('\n')
-//!    .map(function(s) { return s.trim(); })
-//!    .join('');
+var debugStatementTemplate = fs.readFileSync(path.join(__dirname, '../js/debug-template.js')).toString().trim();
 
 function buildDebugStatement(file, line, isDebuggerStatement) {
-    return  debugStatementStart +
-            debugStatementTemplate
+    return debugStatementTemplate
                 .replace('__FILE__', file)
                 .replace('__LINE__', line)
-                .replace('__DEBUGGER__', isDebuggerStatement ? 'true' : 'false') +
-            debugStatementEnd;
+                .replace('__DEBUGGER__', isDebuggerStatement ? 'true' : 'false');
 }
 
 module.exports = {

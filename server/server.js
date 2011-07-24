@@ -14,7 +14,16 @@ function run() {
 var evals = [];
 
 function AardwolfServer(req, res) {
+    res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    
+    if (req.method == 'OPTIONS') {
+        res.end();
+        return;
+    }
     
     var body = '';
     req.on('data', function (chunk) { body += chunk; });
@@ -69,4 +78,4 @@ function AardwolfServer(req, res) {
     }
 }
 
-exports.run = run;
+module.exports.run = run;

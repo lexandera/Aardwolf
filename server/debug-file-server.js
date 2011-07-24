@@ -41,8 +41,10 @@ function DebugFileServer(req, res) {
         var content = fs.readFileSync(fullRequestedFilePath).toString();
         if (requestedFile.substr(-3) == '.js') {
             content = jsrewriter.addDebugStatements(requestedFile, content);
+            res.writeHead(200, {'Content-Type': 'application/javascript'});
+        } else if (requestedFile.substr(-4) == '.html') {
+            res.writeHead(200, {'Content-Type': 'text/html'});
         }
-        res.writeHead(200, {'Content-Type': 'application/javascript'});
         res.end(content);
     }
     else {
@@ -52,4 +54,4 @@ function DebugFileServer(req, res) {
 }
 
 
-exports.run = run;
+module.exports.run = run;
