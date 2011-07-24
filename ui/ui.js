@@ -9,8 +9,6 @@ $(function() {
     $('#btn-step').click(breakpointStep);
 });
 
-
-
 function initDebugger() {
     sendToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
     listenToServer();
@@ -30,20 +28,14 @@ function breakpointStep() {
 
 function sendToServer(payload) {
     var req = new XMLHttpRequest();
-    
-    // TODO: fix address!
-    req.open('POST', 'http://192.168.0.10:8000/desktop/outgoing', false);
-    
+    req.open('POST', '/desktop/outgoing', false);
     req.setRequestHeader('Content-Type', 'application/json');
     req.send(JSON.stringify(payload));
 }
 
 function listenToServer() {
     var req = new XMLHttpRequest();
-    
-    // TODO: fix address!
-    req.open('GET', 'http://192.168.0.10:8000/desktop/incoming', true);
-    
+    req.open('GET', '/desktop/incoming', true);
     req.onreadystatechange = function () {
         if (req.readyState == 4) {
             writeOutput(JSON.parse(req.responseText));
@@ -69,7 +61,7 @@ function writeOutput(data) {
             break;
     }
     
-    $('<div></div>').text((++lineNum) +': ' +msg).prependTo($('#output'));
+    $('<div></div>').text((++lineNum) + ': ' + msg).prependTo($('#output'));
 }
 
 

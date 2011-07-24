@@ -1,12 +1,14 @@
 
 var http = require('http');
+var path = require('path');
 
 var config = require('../config/config.defaults.js');
+var util = require('./server-util.js');
 
 function run() {
     /* Server for web service ports and debugger UI */
     http.createServer(AardwolfServer).listen(config.serverPort, null, function() {
-        console.log('Server listening for requests on port '+config.serverPort+'.');
+        console.log('Server listening for requests on port ' + config.serverPort + '.');
     });
 }
 
@@ -25,13 +27,14 @@ function AardwolfServer(req, res) {
     if (req.method == 'OPTIONS') {
         res.end();
         return;
-    } else if (req.method == 'POST') {
+    }
+    else if (req.method == 'POST') {
         req.on('data', function (chunk) { body += chunk; });
         req.on('end', function () { processPostedData(JSON.parse(body)); });
-    } else {
+    }
+    else {
         processPostedData({});
     }
-    
     
     function processPostedData(data) {
         switch (req.url) {
@@ -40,7 +43,6 @@ function AardwolfServer(req, res) {
                 break;
                 
             case '/mobile/console':
-                console.log('CONSOLE ' + data.type + ': '+data.message);
                 desktopDispatcher.addMessage(data);
                 ok200();
                 break;
@@ -59,7 +61,30 @@ function AardwolfServer(req, res) {
                 desktopDispatcher.setClient(res);
                 break;
                 
+            case '/':
+            case '/ui':
+            case '/ui/':
+                res.writeHead(302, {'Location': '/ui/index.html'});
+                res.end();
+                break;
+                
             default:
+                /* check if we need to serve a UI file */
+                if (req.url.indexOf('/ui/') === 0) {
+                    var requestedFile = req.url.substr(4);
+                    var uiFilesDir = path.join(__dirname, '../ui/');
+                    var fullRequestedFilePath = path.join(uiFilesDir, requestedFile);
+                    
+                    /* File must exist and must be located inside the uiFilesDir */
+                    if (path.existsSync(fullRequestedFilePath) &&
+                             fullRequestedFilePath.indexOf(uiFilesDir) === 0)
+                    {
+                        util.serveStaticFile(res, fullRequestedFilePath);
+                        break;
+                    }
+                }
+                
+                /* fallback... */
                 res.writeHead(404, {'Content-Type': 'text/plain'});
                 res.end('NOT FOUND');
         }
@@ -77,24 +102,20 @@ function Dispatcher(pfx) {
     var client;
     
     this.setClient = function(c) {
-        console.log(pfx + ' set client ');
         client = c;
         process();
     };
     
     this.addMessage = function(m) {
-        console.log(pfx + ' add msg ' + m);
         queue.push(m);
         process();
     };
     
     function process() {
-        console.log(pfx + ' process');
         if (client && queue.length > 0) {
             client.writeHead(200, { 'Content-Type': 'application/json' });
             var msg = queue.shift();
             client.end(JSON.stringify(msg));
-            console.log(pfx + ' processed message '+msg);
             client = null;
         }
     }

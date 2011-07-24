@@ -5,6 +5,7 @@ var fs = require('fs');
 
 var config = require('../config/config.defaults.js');
 var jsrewriter = require('../jsrewriter/jsrewriter.js');
+var util = require('./server-util.js');
 
 function run() {
     if (!path.existsSync(config.jsFileServerBaseDir)) {
@@ -14,7 +15,7 @@ function run() {
     
     /* Serves JS files with debug statements inserted */
     http.createServer(DebugFileServer).listen(config.jsFileServerPort, null, function() {
-        console.log('JS file server listening for requests on port '+config.jsFileServerPort+'.');
+        console.log('JS file server listening for requests on port ' + config.jsFileServerPort + '.');
     });
 }
 
@@ -26,26 +27,21 @@ function DebugFileServer(req, res) {
     
     /* alias for serving the debug library */
     if (requestedFile.toLowerCase() == '/aardwolf.js') {
-        var js = fs.readFileSync(path.join(__dirname, '../js/aardwolf.js'))
-            .toString()
-            .replace('__SERVER_HOST__', config.serverHost)
-            .replace('__SERVER_PORT__', config.serverPort);
-        
-        res.writeHead(200, {'Content-Type': 'application/javascript'});
-        res.end(js);
+        util.serveStaticFile(res, path.join(__dirname, '../js/aardwolf.js'));
     }
     /* File must exist and must be located inside the jsFileServerBaseDir */
     else if (path.existsSync(fullRequestedFilePath) &&
              fullRequestedFilePath.indexOf(jsFileServerBaseDir) === 0)
     {
-        var content = fs.readFileSync(fullRequestedFilePath).toString();
         if (requestedFile.substr(-3) == '.js') {
+            var content = fs.readFileSync(fullRequestedFilePath).toString();
             content = jsrewriter.addDebugStatements(requestedFile, content);
             res.writeHead(200, {'Content-Type': 'application/javascript'});
-        } else if (requestedFile.substr(-4) == '.html') {
-            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.end(content);
         }
-        res.end(content);
+        else {
+            util.serveStaticFile(res, fullRequestedFilePath);
+        }
     }
     else {
         res.writeHead(404, {'Content-Type': 'text/plain'});
