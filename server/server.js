@@ -1,25 +1,14 @@
 
 var http = require('http');
-var path = require('path');
-var fs = require('fs');
 
 var config = require('../config/config.defaults.js');
-var jsrewriter = require('../jsrewriter/jsrewriter.js');
 
-if (!path.existsSync(config.jsFileServerBaseDir)) {
-    console.error('ERROR: Path does not exist: ' + config.jsFileServerBaseDir);
-    process.exit(1);
+function run() {
+    /* Server for web service ports and debugger UI */
+    http.createServer(AardwolfServer).listen(config.serverPort, null, function() {
+        console.log('Server listening for requests on port '+config.serverPort+'.');
+    });
 }
-
-/* Server for web service ports and debugger UI */
-http.createServer(AardwolfServer).listen(config.serverPort, null, function() {
-    console.log('Server listening for requests on port '+config.serverPort+'.');
-});
-
-/* Serves JS files with debug statements inserted */
-http.createServer(DebugFileServer).listen(config.jsFileServerPort, null, function() {
-    console.log('JS file server listening for requests on port '+config.jsFileServerPort+'.');
-});
 
 
 var evals = [];
@@ -49,7 +38,7 @@ function AardwolfServer(req, res) {
                 // TODO: un-hardcode; get breakpoints from debug ui
                 res.end(JSON.stringify({
                     command: 'set-breakpoints',
-                    data: { '/sample1.js': { 3: true } }
+                    data: { '/sample1.js': { 5: true } }
                 }));
                 
                 break;
@@ -58,7 +47,7 @@ function AardwolfServer(req, res) {
                 // TODO: do not continue automatically
             
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                var ev = evals.pop();
+                var ev = evals.shift();
                 if (ev) {
                     res.end(JSON.stringify(ev));
                 } else {
@@ -80,33 +69,4 @@ function AardwolfServer(req, res) {
     }
 }
 
-function DebugFileServer(req, res) {
-    var requestedFile = req.url;
-    var jsFileServerBaseDir = path.normalize(config.jsFileServerBaseDir);
-    var fullRequestedFilePath = path.join(jsFileServerBaseDir, requestedFile);
-    
-    /* alias for serving the debug library */
-    if (requestedFile.toLowerCase() == '/aardwolf.js') {
-        var js = fs.readFileSync(path.join(__dirname, '../js/aardwolf.js'))
-            .toString()
-            .replace('__SERVER_HOST__', config.serverHost)
-            .replace('__SERVER_PORT__', config.serverPort);
-        
-        res.writeHead(200, {'Content-Type': 'application/javascript'});
-        res.end(js);
-    }
-    /* File must exist and must be located inside the jsFileServerBaseDir */
-    else if (path.existsSync(fullRequestedFilePath) &&
-             fullRequestedFilePath.indexOf(jsFileServerBaseDir) === 0)
-    {
-        var js = fs.readFileSync(fullRequestedFilePath).toString();
-        js = jsrewriter.addDebugStatements(requestedFile, js);
-        res.writeHead(200, {'Content-Type': 'application/javascript'});
-        res.end(js);
-    }
-    else {
-        res.writeHead(404, {'Content-Type': 'text/plain'});
-        res.end('NOT FOUND');
-    }
-}
-
+exports.run = run;
