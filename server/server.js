@@ -1,6 +1,7 @@
 
 var http = require('http');
 var path = require('path');
+var fs = require('fs');
 
 var config = require('../config/config.defaults.js');
 var util = require('./server-util.js');
@@ -33,7 +34,7 @@ function AardwolfServer(req, res) {
         req.on('end', function () { processPostedData(JSON.parse(body)); });
     }
     else {
-        processPostedData({});
+        processPostedData();
     }
     
     function processPostedData(data) {
@@ -87,14 +88,14 @@ function AardwolfServer(req, res) {
                 }
                 
                 /* check if we need to serve a UI file */
-                if (req.url.indexOf('/files/raw/') === 0) {
+                if (req.url.indexOf('/files/data/') === 0) {
                     var requestedFile = req.url.substr(11);
                     var jsFilesDir = path.normalize(config.jsFileServerBaseDir);
                     var fullRequestedFilePath = path.join(jsFilesDir, requestedFile);
                     
                     /* File must exist and must be located inside the jsFilesDir */
                     if (path.existsSync(fullRequestedFilePath) && fullRequestedFilePath.indexOf(jsFilesDir) === 0) {
-                        util.serveStaticFile(res, fullRequestedFilePath);
+                        ok200({ data: fs.readFileSync(fullRequestedFilePath).toString() });
                         break;
                     }
                 }

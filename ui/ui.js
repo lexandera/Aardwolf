@@ -9,28 +9,46 @@ $(function() {
     $('#btn-step').click(breakpointStep);
 });
 
+var jsFiles = {};
+
 function initDebugger() {
-    sendToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
+    var fileList = getFromServer('/files/list');
+    jsFiles = {};
+    
+    fileList.files.forEach(function(f) {
+        var fdata = getFromServer('/files/data/'+f)
+        jsFiles[f] = fdata.data;
+    });
+    
+    
+    postToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
     listenToServer();
 }
 
 function evalCodeRemotely() {
-    sendToServer({ command: 'eval', data: $('#eval').val() });
+    postToServer({ command: 'eval', data: $('#eval').val() });
 }
 
 function breakpointContinue() {
-    sendToServer({ command: 'breakpoint-continue' });
+    postToServer({ command: 'breakpoint-continue' });
 }
 
 function breakpointStep() {
-    sendToServer({ command: 'breakpoint-step' });
+    postToServer({ command: 'breakpoint-step' });
 }
 
-function sendToServer(payload) {
+function postToServer(payload) {
     var req = new XMLHttpRequest();
     req.open('POST', '/desktop/outgoing', false);
     req.setRequestHeader('Content-Type', 'application/json');
     req.send(JSON.stringify(payload));
+}
+
+function getFromServer(path) {
+    var req = new XMLHttpRequest();
+    req.open('GET', path, false);
+    req.send();
+    return JSON.parse(req.responseText);
 }
 
 function listenToServer() {
@@ -57,7 +75,7 @@ function writeOutput(data) {
             msg = 'EVAL INPUT: ' + data.input + ' RESULT: ' + data.result;
             break;
         case 'report-breakpoint':
-            msg = 'BREAKING AT: ' + data.file + ', line ' + data.line;
+            msg = 'BREAKING AT: ' + data.file + ', line ' + data.line + ' ' + (jsFiles[data.file.substr(1)].split('\n')[data.line - 1]);
             break;
     }
     
