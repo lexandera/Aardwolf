@@ -61,6 +61,10 @@ function AardwolfServer(req, res) {
                 desktopDispatcher.setClient(res);
                 break;
                 
+            case '/files/list':
+                ok200({ files: util.getJSFilesList() });
+                break;
+                
             case '/':
             case '/ui':
             case '/ui/':
@@ -90,9 +94,9 @@ function AardwolfServer(req, res) {
         }
     }
     
-    function ok200() {
+    function ok200(data) {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({}));
+        res.end(JSON.stringify(data || {}));
     }
 }
 

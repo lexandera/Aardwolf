@@ -1,5 +1,6 @@
 
 var fs = require('fs');
+var path = require('path');
 var config = require('../config/config.defaults.js');
 
 function serveStaticFile(res, filename) {
@@ -19,5 +20,36 @@ function serveStaticFile(res, filename) {
     res.end(fdata);
 }
 
+
+function getJSFilesList() {
+    var jsFiles = [];
+    var baseDir = path.normalize(config.jsFileServerBaseDir);
+    
+    function walk(dir) {
+        var fileList = fs.readdirSync(dir);
+        fileList.forEach(function(f) {
+            var fullPath = path.join(dir, f);
+            var stat = fs.statSync(fullPath);
+            if (stat.isFile()) {
+                if (fullPath.substr(-3) == '.js') {
+                    jsFiles.push(fullPath.substr(baseDir.length +1));
+                }
+            }
+            else {
+                walk(fullPath);
+            }
+        });
+    }
+    
+    walk(baseDir);
+    
+    /* Unixify paths */
+    jsFiles = jsFiles.map(function(f) { return f.replace(/\\/g, '/'); });
+    
+    return jsFiles;
+}
+
+
 module.exports.serveStaticFile = serveStaticFile;
+module.exports.getJSFilesList = getJSFilesList;
 
