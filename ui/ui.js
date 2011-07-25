@@ -1,6 +1,6 @@
 
 $(function() {
-    $('#breakpoints').val(JSON.stringify([['/sample1.js', 3], ['/sample1.js', 5]]));
+    $('#breakpoints').val(JSON.stringify([['/sample1.js', 3], ['/sample1.js', 6]]));
     $('#eval').val("'foo'.toUpperCase()");
     
     $('#btn-start').click(initDebugger);
@@ -69,17 +69,19 @@ function writeOutput(data) {
     
     switch (data.command) {
         case 'print-message': 
-        msg = data.type + ': ' + data.message;
+            msg = '<b>'+data.type + '</b>: ' + data.message;
             break;
         case 'print-eval-result':
-            msg = 'EVAL INPUT: ' + data.input + ' RESULT: ' + data.result;
+            msg = '<b>EVAL</b> INPUT: ' + data.input + ' RESULT: ' + data.result;
             break;
         case 'report-breakpoint':
-            msg = 'BREAKING AT: ' + data.file + ', line ' + data.line + ' ' + (jsFiles[data.file.substr(1)].split('\n')[data.line - 1]);
+            msg = '<b>BREAKPOINT</b> AT: ' + data.file + ', line ' + data.line + '<br/>'+
+                  '<i>' + jsFiles[data.file.substr(1)].split('\n')[data.line - 1] +'</i><br/>' +
+                  'stack: ' + data.stack.join(' / ');
             break;
     }
     
-    $('<div></div>').text((++lineNum) + ': ' + msg).prependTo($('#output'));
+    $('<div></div>').html((++lineNum) + ': ' + msg).prependTo($('#output'));
 }
 
 

@@ -60,8 +60,17 @@ window.Aardwolf = new (function() {
             evalResult = 'ERROR: ' + ex.toString();
         }  
         sendToServer('/console', { command: 'print-eval-result', input: cmd.data, result: evalResult });
-    };
+    }
     
+    function getStack() {
+        var callstack = [];
+        var currentFunction = arguments.callee;
+        while (currentFunction = currentFunction.caller) {
+            var fname = currentFunction.name || '<anonymous>';
+            callstack.push(fname);
+        }
+        return callstack;
+    };
     
     this.init = function() {
         replaceConsole();
@@ -78,7 +87,7 @@ window.Aardwolf = new (function() {
                 return;
             }
             
-            var cmd = sendToServer('/breakpoint', { command: 'report-breakpoint', file: file, line: line });
+            var cmd = sendToServer('/breakpoint', { command: 'report-breakpoint', file: file, line: line, stack: getStack().slice(1) });
             if (!cmd) {
                 return;
             }                

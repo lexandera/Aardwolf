@@ -40,6 +40,8 @@ function AardwolfServer(req, res) {
     function processPostedData(data) {
         switch (req.url) {
             case '/mobile/init':
+                mobileDispatcher = new Dispatcher();
+                desktopDispatcher = new Dispatcher();
                 mobileDispatcher.setClient(res);
                 break;
                 
