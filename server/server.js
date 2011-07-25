@@ -80,9 +80,20 @@ function AardwolfServer(req, res) {
                     var fullRequestedFilePath = path.join(uiFilesDir, requestedFile);
                     
                     /* File must exist and must be located inside the uiFilesDir */
-                    if (path.existsSync(fullRequestedFilePath) &&
-                             fullRequestedFilePath.indexOf(uiFilesDir) === 0)
-                    {
+                    if (path.existsSync(fullRequestedFilePath) && fullRequestedFilePath.indexOf(uiFilesDir) === 0) {
+                        util.serveStaticFile(res, fullRequestedFilePath);
+                        break;
+                    }
+                }
+                
+                /* check if we need to serve a UI file */
+                if (req.url.indexOf('/files/raw/') === 0) {
+                    var requestedFile = req.url.substr(11);
+                    var jsFilesDir = path.normalize(config.jsFileServerBaseDir);
+                    var fullRequestedFilePath = path.join(jsFilesDir, requestedFile);
+                    
+                    /* File must exist and must be located inside the jsFilesDir */
+                    if (path.existsSync(fullRequestedFilePath) && fullRequestedFilePath.indexOf(jsFilesDir) === 0) {
                         util.serveStaticFile(res, fullRequestedFilePath);
                         break;
                     }
