@@ -56,32 +56,43 @@ function listenToServer() {
     req.open('GET', '/desktop/incoming', true);
     req.onreadystatechange = function () {
         if (req.readyState == 4) {
-            writeOutput(JSON.parse(req.responseText));
+            processOutput(JSON.parse(req.responseText));
             listenToServer();
         }
     };
     req.send(null);
 }
 
-var lineNum = 0;
-function writeOutput(data) {
-    var msg = '';
-    
+function processOutput(data) {
     switch (data.command) {
         case 'print-message': 
-            msg = '<b>'+data.type + '</b>: ' + data.message;
+            writeToConsole('<b>'+data.type + '</b>: ' + data.message);
             break;
         case 'print-eval-result':
-            msg = '<b>EVAL</b> INPUT: ' + data.input + ' RESULT: ' + data.result;
+            writeToConsole('<b>EVAL</b> INPUT: ' + data.input + ' RESULT: ' + data.result);
             break;
         case 'report-breakpoint':
-            msg = '<b>BREAKPOINT</b> AT: ' + data.file + ', line ' + data.line + '<br/>'+
-                  '<i>' + jsFiles[data.file.substr(1)].split('\n')[data.line - 1] +'</i><br/>' +
-                  'stack: ' + data.stack.join(' / ');
+            var code = jsFiles[data.file.substr(1)]
+                .split('\n')
+                .map(function(x, i) {
+                    var num = String(i+1);
+                    var paddedNum = '      '.substr(num.length) + num + ' ';
+                    return (i == data.line - 1 ? ' >>>>>>' : paddedNum) + ' ' + x;
+                })
+                .join('\n');
+        
+            $('#code').text(code);
+            $('#stack').text(data.stack.join('\n'));
             break;
     }
     
+}
+
+
+var lineNum = 0;
+function writeToConsole(msg) {
     $('<div></div>').html((++lineNum) + ': ' + msg).prependTo($('#output'));
 }
+
 
 

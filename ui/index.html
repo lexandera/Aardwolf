@@ -8,8 +8,37 @@
         <script type="text/javascript" src="ui.js"></script>
         
         <style>
+            
+            .notatable {
+                display:table;
+                width: 100%;
+                border-collapse:collapse;
+                border-spacing:10px;
+            }
+            
+            .notarow {
+                display:table-row;
+            }
+            
+            .notacell {
+                display:table-cell;
+            }
+            
+            #top-toolbar {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            
+            #code {
+                background: #efefef;
+                overflow-x: hide;
+                overflow-y: scroll;
+                height: 400px;
+                clear: none;
+            }
+            
             textarea {
-                width: 75%;
+                width: 99%;
                 font-family: "Courier New";
                 font-size: 14px;
             }
@@ -24,30 +53,46 @@
                 border-bottom: 1px solid #bbb;
                 padding: 3px;
             }
+            
         
         </style>
         <script></script>
     </head>
     
     <body>
-        Breakpoints:<br/>
-        <textarea id="breakpoints"></textarea>
-        
-        <br/>
-        
-        Console:<br/>
-        <textarea id="eval"></textarea>
-        <br/>
-        <button id="btn-eval">eval()</button>
-        
-        <br/><br/>
-        
-        <button id="btn-start">START</button> &nbsp;&nbsp;&nbsp;&nbsp;
-        <button id="btn-continue">continue</button>
-        <button id="btn-step">step</button>
+        <div id="top-toolbar">
+            <button id="btn-start">START</button> &nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="btn-continue">continue</button>
+            <button id="btn-step">step</button>
+        </div>
     
-        
-        <br/><br/>
+        <div class="notatable">
+            <div class="notarow">
+                <div class="notacell">
+                    <pre id="code">&nbsp;</pre>
+                </div>
+                <div class="notacell" style="width: 40%; padding-left: 20px;">
+                    Breakpoints:<br/>
+                    <textarea id="breakpoints"></textarea>
+                
+                    <br/>
+                    <br/>
+                    
+                    Console:<br/>
+                    <textarea id="eval"></textarea>
+                    <br/>
+                    <button id="btn-eval">eval()</button>
+                    
+                    <br/>
+                    <br/>
+                    
+                    Stack:
+                    <pre id="stack">
+                    </pre>
+                
+                </div>
+            </div>
+        </div>
         Output: <br/>
         <div id="output">
         </div>
