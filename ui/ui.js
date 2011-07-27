@@ -1,7 +1,7 @@
 
 $(function() {
-    $('#breakpoints').val(JSON.stringify([['/sample1.js', 3], ['/sample1.js', 6]]));
-    $('#eval').val("'foo'.toUpperCase()");
+    $('#breakpoints').val(JSON.stringify([['/calc.js', 21], ['/calc.js', 30]]));
+    $('#eval').val("");
     
     $('#btn-start').click(initDebugger);
     $('#btn-eval').click(evalCodeRemotely);

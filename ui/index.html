@@ -7,56 +7,7 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <script type="text/javascript" src="ui.js"></script>
         
-        <style>
-            
-            .notatable {
-                display:table;
-                width: 100%;
-                border-collapse:collapse;
-                border-spacing:10px;
-            }
-            
-            .notarow {
-                display:table-row;
-            }
-            
-            .notacell {
-                display:table-cell;
-            }
-            
-            #top-toolbar {
-                margin-top: 10px;
-                margin-bottom: 10px;
-            }
-            
-            #code {
-                background: #efefef;
-                overflow-x: hide;
-                overflow-y: scroll;
-                height: 400px;
-                clear: none;
-            }
-            
-            textarea {
-                width: 99%;
-                font-family: "Courier New";
-                font-size: 14px;
-            }
-        
-            #output {
-                background: #eee;
-                font-family: "Courier New";
-                font-size: 14px;
-            }
-            
-            #output div {
-                border-bottom: 1px solid #bbb;
-                padding: 3px;
-            }
-            
-        
-        </style>
-        <script></script>
+        <link href="ui.css" rel="stylesheet" type="text/css" />
     </head>
     
     <body>
@@ -86,7 +37,7 @@
                     <br/>
                     <br/>
                     
-                    Stack:
+                    Call stack:
                     <pre id="stack">
                     </pre>
                 

@@ -1,15 +1,43 @@
 
-
 Aardwolf is a remote JavaScript debugger for Android/iOS and is written in JavaScript.
+It's available under the MIT license.
+
+For some mindless drivel, see: http://lexandera.com/aardwolf/
+
+Currently supported features:
+- breakpoints
+- code evaluation at breakpoint
+- step/continue execution control
+- stack listing
+- JavaScript console remoting
+
 
 It consists of the following parts:
+- a server for communication between the mobile device and the UI
 - a code rewriter which injects debug info into your existing source code
 - a debug library which can break execution of your scripts, report execution progress, evaluate code, etc.
 - a UI for setting breakpoints, stepping through code and seeing the current position within the script
-- a server for communication between the debug library and the UI
 
 
-In order to run the server and the code rewriter you will need Node.js:
-- Get it here: http://nodejs.org/#download
+In order to run the examples you will need:
+- Node.js. Get it here: http://nodejs.org/#download
+- An Android 2.x or iOS device or emulator. (but a separate Firefox/Chrome/Safari window will also do...)
 
+
+Setting it up:
+- Download the source code.
+- Create the file config/config.local.js and paste into it the following lines:
+
+    var config = require('../config/config.defaults.js');
+    config.serverHost = 'ip-or-hostname-of-your-computer';
+
+- Make sure that access to the port 8500 on your computer is not blocked by a firewall and that the 
+  address you entered into the config file in the previous step can really be accessed from your 
+  phone. This is where your phone will load the samples from, so it must work.
+- Start the server by running "node app.js"
+- After the server starts up, open http://localhost:8000 in your desktop browser.
+  You should see a very ugly debugger appear UI.
+- Open http://ip-or-hostname-of-your-computer:8500/calc.html on your phone
+  (nothing will appear until the next step).
+- Press the "start" button in the debugger UI. You're now debugging the exmple script.
 
