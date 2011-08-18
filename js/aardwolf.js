@@ -104,6 +104,10 @@ window.Aardwolf = new (function() {
         }
     };
     
+    this.reportException = function(e) {
+        console.error('EXCEPTION: '+e.toString());
+    }
+    
 })();
 
 Aardwolf.init();

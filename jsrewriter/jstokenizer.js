@@ -40,7 +40,7 @@ function tokenize(str, onToken) {
         if (endPos === -1) {
             endPos = len - 1;
         }
-        onToken(str.substring(pos, endPos), 'comment1');
+        onToken(str.substring(pos, endPos), 'comment');
         pos = endPos;
     }
     
@@ -48,7 +48,7 @@ function tokenize(str, onToken) {
         var endPos = pos;
         while (!(str[++endPos] === '*' && str[endPos+1] === '/'));
         endPos += 2;
-        onToken(str.substring(pos, endPos), 'comment2');
+        onToken(str.substring(pos, endPos), 'comment');
         pos = endPos;
     }
     
@@ -86,7 +86,8 @@ function tokenize(str, onToken) {
     }
     
     function extractChar() {
-        onToken(str.substr(pos, 1), 'char');
+        var c = str.substr(pos, 1);
+        onToken(c, c === '\n' ? 'newline' : 'char');
         ++pos;
     }
 }

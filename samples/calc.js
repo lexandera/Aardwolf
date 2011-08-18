@@ -27,6 +27,11 @@ function calculate() {
     
     function performMultiplication(n1, n2) {
         console.log('Performing multiplication of '+n1+' and '+n2+'.');
+        
+        setTimeout(function() {
+            nonExistingObjectForExceptionReportingDemonstration.bar();
+        }, 1000);
+        
         return n1 * n2;
     }
     

@@ -1,6 +1,6 @@
 
 $(function() {
-    $('#breakpoints').val(JSON.stringify([['/calc.js', 21], ['/calc.js', 30]]));
+    $('#breakpoints').val(JSON.stringify([['/calc.js', 21], ['/calc.js', 32]]));
     $('#eval').val("");
     
     $('#btn-start').click(initDebugger);
