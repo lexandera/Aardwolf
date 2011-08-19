@@ -16,14 +16,18 @@ window.Aardwolf = new (function() {
     }
     
     function replaceConsole() {
+        if (!window.console) {
+            window.console = {};
+        }
+        
         ['info', 'log', 'warn', 'error'].forEach(function(f) {
             var oldFunc = window.console[f];
             
             window.console[f] = function() {
                 var args = Array.prototype.slice.call(arguments);
-                var out = oldFunc.apply(window.console, args);
+                /* write to local console before writing to the potentially slow remote console */
+                oldFunc && oldFunc.apply(window.console, args);
                 sendToServer('/console', { command: 'print-message', type: f.toUpperCase(), message: args.toString() });
-                return out; 
             };
         });
     }
@@ -111,3 +115,4 @@ window.Aardwolf = new (function() {
 })();
 
 Aardwolf.init();
+
