@@ -63,6 +63,30 @@ function listenToServer() {
     req.send(null);
 }
 
+function showBreakpoint(data) {
+    var codeLines = jsFiles[data.file.substr(1)]
+        .split('\n')
+        .map(function(x, i) {
+            var num = String(i+1);
+            var paddedNum = '      '.substr(num.length) + num + ' ';
+            return (i == data.line - 1 ? ' >>>>>>' : paddedNum) + ' ' + x;
+        });
+
+    var $code = $('#code');    
+    $code.text(codeLines.join('\n'));
+    $('#stack').text(data.stack.join('\n'));
+    
+    var numLines = codeLines.length;
+    var textAreaHeight = $code.height();
+    var textAreaContentHeight = $code[0].scrollHeight;
+    
+    if (textAreaContentHeight > textAreaHeight) {
+        var heightPerLine = (textAreaContentHeight - textAreaHeight) / numLines;
+        var scrollTo = data.line * heightPerLine;
+        $code.scrollTop(scrollTo);
+    }
+}
+
 function processOutput(data) {
     switch (data.command) {
         case 'print-message': 
@@ -72,17 +96,7 @@ function processOutput(data) {
             writeToConsole('<b>EVAL</b> INPUT: ' + data.input + ' RESULT: ' + data.result);
             break;
         case 'report-breakpoint':
-            var code = jsFiles[data.file.substr(1)]
-                .split('\n')
-                .map(function(x, i) {
-                    var num = String(i+1);
-                    var paddedNum = '      '.substr(num.length) + num + ' ';
-                    return (i == data.line - 1 ? ' >>>>>>' : paddedNum) + ' ' + x;
-                })
-                .join('\n');
-        
-            $('#code').text(code);
-            $('#stack').text(data.stack.join('\n'));
+            showBreakpoint(data);
             break;
     }
     
