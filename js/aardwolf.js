@@ -9,9 +9,7 @@ window.Aardwolf = new (function() {
     var asyncXHR = null;
     
     function listenToServer() {
-        if (asyncXHR) {
-            asyncXHR.abort();
-        }
+        dropCommandConnection();
         
         var req = asyncXHR = new XMLHttpRequest();
         req.open('GET', serverUrl + '/mobile/incoming', true);
@@ -32,11 +30,14 @@ window.Aardwolf = new (function() {
         req.send(null);
     }
     
-    function sendToServer(path, payload) {
+    function dropCommandConnection() {
         if (asyncXHR) {
             asyncXHR.abort();
         }
-        
+        asyncXHR = null;
+    }
+    
+    function sendToServer(path, payload) {
         var req = new XMLHttpRequest();
         req.open('POST', serverUrl + '/mobile' + path, false);
         req.setRequestHeader('Content-Type', 'application/json');
@@ -74,7 +75,11 @@ window.Aardwolf = new (function() {
                     breakpoints[file][line] = true;
                 });
                 return true;
-                
+            
+            case 'break-on-next':
+                breakOnNext = true;
+                return true;
+            
             case 'breakpoint-continue':
                 breakOnNext = false;
                 return false;
@@ -121,9 +126,10 @@ window.Aardwolf = new (function() {
                 return;
             }
             
+            dropCommandConnection();
             var cmd = sendToServer('/breakpoint', { command: 'report-breakpoint', file: file, line: line, stack: getStack().slice(1) });
+            listenToServer();
             if (!cmd) {
-                listenToServer();
                 return;
             }                
                 
@@ -133,7 +139,6 @@ window.Aardwolf = new (function() {
             else {
                 var isInternalCommand = processCommand(cmd);
                 if (!isInternalCommand) {
-                    listenToServer();
                     return;
                 }
             }

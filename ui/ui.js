@@ -8,6 +8,8 @@ $(function() {
     $('#eval').val("");
     
     $('#btn-start').click(initDebugger);
+    $('#btn-update-breakpoints').click(updateBreakpoints);
+    $('#btn-breakon-next').click(setBreakOnNext);
     $('#btn-eval').click(evalCodeRemotely);
     $('#btn-continue').click(breakpointContinue);
     $('#btn-step').click(breakpointStep);
@@ -29,6 +31,14 @@ function initDebugger() {
     
     postToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
     listenToServer();
+}
+
+function updateBreakpoints() {
+    postToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
+}
+
+function setBreakOnNext() {
+    postToServer({ command: 'break-on-next', data: JSON.parse($('#breakpoints').val()) });
 }
 
 function evalCodeRemotely() {
