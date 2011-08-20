@@ -23,7 +23,7 @@ function addDebugStatements(filePath, text) {
     var nestingDepth = [0];
     var out = [];
     var line = 1;
-    var semicolonOrFunctionEncountered = true;
+    var semicolonOrFunctionBoundryEncountered = true;
     var newlineEncountered = true;
     
     jstok.tokenize(text, function(token, type) {
@@ -42,12 +42,12 @@ function addDebugStatements(filePath, text) {
             Yes, this rewriter assumes that you're using semicolons in your code.
         */
         if (['word', 'number', 'string', 'char'].indexOf(type) > -1) {
-            if (semicolonOrFunctionEncountered && newlineEncountered) {
+            if (semicolonOrFunctionBoundryEncountered && newlineEncountered) {
                 var isDebuggerStatement = token === 'debugger';
                 out.push(buildDebugStatement(filePath, line, isDebuggerStatement));
             }
             
-            semicolonOrFunctionEncountered = false;
+            semicolonOrFunctionBoundryEncountered = false;
             newlineEncountered = false;
         }
         
@@ -64,7 +64,7 @@ function addDebugStatements(filePath, text) {
             /* we have just entered a function body - insert the first part of the exception interception block */
             if (nestingDepth.length > 1 && nestingDepth[nestingDepth.length-1] === 1) {
                 out.push(exceptionInterceptorStart);
-                semicolonOrFunctionEncountered = true;
+                semicolonOrFunctionBoundryEncountered = true;
             }
         }
         else if (token === '}') {
@@ -74,13 +74,14 @@ function addDebugStatements(filePath, text) {
             if (nestingDepth.length > 1 && nestingDepth[nestingDepth.length-1] === 0) {
                 out.push(exceptionInterceptorEnd);
                 nestingDepth.pop();
+                semicolonOrFunctionBoundryEncountered = true;
             }
             
             out.push(token);
         }
         else {
             if (token === ';') {
-                semicolonOrFunctionEncountered = true;
+                semicolonOrFunctionBoundryEncountered = true;
             }
             else if (token === '\n') {
                 ++line;
