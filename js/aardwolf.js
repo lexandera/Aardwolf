@@ -3,7 +3,6 @@ window.Aardwolf = new (function() {
     var serverHost = '__SERVER_HOST__';
     var serverPort = '__SERVER_PORT__';
     var serverUrl = 'http://' + serverHost + ':' + serverPort;
-    
     var breakpoints = {};
     var breakOnNext = false;
     var asyncXHR = null;
@@ -151,5 +150,5 @@ window.Aardwolf = new (function() {
     
 })();
 
-Aardwolf.init();
+window.Aardwolf.init();
 

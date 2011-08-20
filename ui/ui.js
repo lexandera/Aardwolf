@@ -18,7 +18,6 @@ $(function() {
     $code = $('#code');
 });
 
-
 function initDebugger() {
     var fileList = getFromServer('/files/list');
     jsFiles = {};
