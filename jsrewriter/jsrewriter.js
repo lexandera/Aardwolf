@@ -4,9 +4,9 @@ var path = require('path');
 var jstok = require('./jstokenizer.js');
 
 var debugStatementTemplate = 
-    fs.readFileSync(path.join(__dirname, '../js/debug-template.js')).toString().trim();
+    fs.readFileSync(path.join(__dirname, 'templates/debug-template.js')).toString().trim();
 var exceptionInterceptorTemplate = 
-    fs.readFileSync(path.join(__dirname, '../js/exception-template.js')).toString().replace(/\n\r?/g, '').replace(/    /g, ' ');
+    fs.readFileSync(path.join(__dirname, 'templates/exception-template.js')).toString().replace(/\n\r?/g, '').replace(/    /g, ' ');
 
 var exceptionInterceptorParts = exceptionInterceptorTemplate.split('SPLIT');
 var exceptionInterceptorStart = exceptionInterceptorParts[0].trim();
