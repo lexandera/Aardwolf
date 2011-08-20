@@ -7,8 +7,10 @@ For some mindless drivel, see: http://lexandera.com/aardwolf/
 Currently supported features:
 - breakpoints
 - code evaluation at breakpoint
+- break on next
 - step/continue execution control
 - stack listing
+- exception reporting (also in async calls)
 - JavaScript console remoting
 
 
