@@ -4,17 +4,24 @@ var path = require('path');
 var config = require('../config/config.defaults.js');
 
 function serveStaticFile(res, filename) {
-    var fdata = fs.readFileSync(filename)
-        .toString()
-        .replace(/__SERVER_HOST__/g, config.serverHost)
-        .replace(/__SERVER_PORT__/g, config.serverPort)
-        .replace(/__JS_FILE_SERVER_PORT__/g, config.jsFileServerPort);
-    
     var ext = filename.split('.').reverse()[0];
     var ct = ext == 'js'   ? 'application/javascript' :
              ext == 'css'  ? 'text/css' :
              ext == 'html' ? 'text/html' :
+             ext == 'png'  ? 'image/png' :
+             ext == 'jpg'  ? 'image/jpeg' :
+             ext == 'jpeg' ? 'image/jpeg' :
              'text/plain';
+             
+    var fdata = fs.readFileSync(filename);
+    
+    if (['png', 'jpg', 'jpeg'].indexOf(ext) == -1) {
+        fdata = fdata
+            .toString()
+            .replace(/__SERVER_HOST__/g, config.serverHost)
+            .replace(/__SERVER_PORT__/g, config.serverPort)
+            .replace(/__JS_FILE_SERVER_PORT__/g, config.jsFileServerPort);
+    }
     
     res.writeHead(200, { 'Content-Type': ct });
     res.end(fdata);

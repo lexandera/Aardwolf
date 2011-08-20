@@ -1,15 +1,21 @@
 
+var jsFiles = {};
+var $codeContainer;
+var $code;
+
 $(function() {
-    $('#breakpoints').val(JSON.stringify([['/calc.js', 21], ['/calc.js', 32]]));
+    $('#breakpoints').val(JSON.stringify([['/calc.js', 2], ['/calc.js', 21], ['/calc.js', 32]]));
     $('#eval').val("");
     
     $('#btn-start').click(initDebugger);
     $('#btn-eval').click(evalCodeRemotely);
     $('#btn-continue').click(breakpointContinue);
     $('#btn-step').click(breakpointStep);
+    
+    $codeContainer = $('#code-container');
+    $code = $('#code');
 });
 
-var jsFiles = {};
 
 function initDebugger() {
     var fileList = getFromServer('/files/list');
@@ -30,10 +36,12 @@ function evalCodeRemotely() {
 }
 
 function breakpointContinue() {
+    removeLineHightlight();
     postToServer({ command: 'breakpoint-continue' });
 }
 
 function breakpointStep() {
+    removeLineHightlight();
     postToServer({ command: 'breakpoint-step' });
 }
 
@@ -69,22 +77,44 @@ function showBreakpoint(data) {
         .map(function(x, i) {
             var num = String(i+1);
             var paddedNum = '      '.substr(num.length) + num + ' ';
-            return (i == data.line - 1 ? ' >>>>>>' : paddedNum) + ' ' + x;
+            return paddedNum + ' ' + x;
         });
 
-    var $code = $('#code');    
     $code.text(codeLines.join('\n'));
     $('#stack').text(data.stack.join('\n'));
     
     var numLines = codeLines.length;
-    var textAreaHeight = $code.height();
-    var textAreaContentHeight = $code[0].scrollHeight;
+    var textAreaHeight = $codeContainer.height();
+    var textAreaContentHeight = $codeContainer[0].scrollHeight;
+    var codeHeight = $code.height();
+    var heightPerLine = codeHeight / numLines;
+    
+    if (data.line) {
+        highlightLine(data.line, numLines)
+    }
     
     if (textAreaContentHeight > textAreaHeight) {
-        var heightPerLine = (textAreaContentHeight - textAreaHeight) / numLines;
-        var scrollTo = data.line * heightPerLine;
-        $code.scrollTop(scrollTo);
+        var scrollAmountPerLine = (textAreaContentHeight - textAreaHeight) / numLines;
+        var scrollTo = Math.round(data.line * scrollAmountPerLine);
+        $codeContainer.scrollTop(scrollTo);
     }
+}
+
+function highlightLine(line, numLines) {
+    var codeHeight = $code.height();
+    var heightPerLine = codeHeight / numLines;
+    
+    $code.css({
+        'background-image': 'url("/ui/img/breakpoint-arrow.png"), url("/ui/img/breakpoint-bg.png")',
+        'background-repeat': 'no-repeat, no-repeat',
+        'background-size': '9px 7px, 100% '+Math.round(heightPerLine)+'px',
+        'background-position': '3px '+Math.round((line - 1) * heightPerLine + ((heightPerLine - 7) / 2))+'px, '+
+                               '0px '+Math.round((line - 1) * heightPerLine)+'px'
+    });
+}
+
+function removeLineHightlight() {
+    $code.css({ 'background-image': '' });
 }
 
 function processOutput(data) {

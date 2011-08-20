@@ -23,7 +23,7 @@ body {
     margin-bottom: 10px;
 }
 
-#code {
+#code-container {
     background: #efefef;
     overflow-x: hide;
     overflow-y: scroll;
