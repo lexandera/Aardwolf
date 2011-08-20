@@ -55,6 +55,10 @@ function AardwolfServer(req, res) {
                 mobileDispatcher.setClient(res);
                 break;
                 
+            case '/mobile/incoming':
+                mobileDispatcher.setClient(res);
+                break;
+                
             case '/desktop/outgoing':
                 mobileDispatcher.addMessage(data);
                 ok200();

@@ -6,8 +6,37 @@ window.Aardwolf = new (function() {
     
     var breakpoints = {};
     var breakOnNext = false;
+    var asyncXHR = null;
+    
+    function listenToServer() {
+        if (asyncXHR) {
+            asyncXHR.abort();
+        }
+        
+        var req = asyncXHR = new XMLHttpRequest();
+        req.open('GET', serverUrl + '/mobile/incoming', true);
+        req.onreadystatechange = function () {
+            if (req.readyState == 4) {
+                var cmd = JSON.parse(req.responseText);             
+                    
+                if (cmd.command == 'eval') {
+                    doEval(function(aardwolfEval) { return eval(aardwolfEval); }, cmd);
+                }
+                else {
+                    processCommand(cmd);
+                }
+                
+                listenToServer();
+            }
+        };
+        req.send(null);
+    }
     
     function sendToServer(path, payload) {
+        if (asyncXHR) {
+            asyncXHR.abort();
+        }
+        
         var req = new XMLHttpRequest();
         req.open('POST', serverUrl + '/mobile' + path, false);
         req.setRequestHeader('Content-Type', 'application/json');
@@ -82,6 +111,7 @@ window.Aardwolf = new (function() {
         if (cmd) {
             processCommand(cmd)
         }
+        listenToServer();
     };
     
     this.updatePosition = function(file, line, isDebuggerStatement, evalScopeFunc) {
@@ -93,6 +123,7 @@ window.Aardwolf = new (function() {
             
             var cmd = sendToServer('/breakpoint', { command: 'report-breakpoint', file: file, line: line, stack: getStack().slice(1) });
             if (!cmd) {
+                listenToServer();
                 return;
             }                
                 
@@ -102,6 +133,7 @@ window.Aardwolf = new (function() {
             else {
                 var isInternalCommand = processCommand(cmd);
                 if (!isInternalCommand) {
+                    listenToServer();
                     return;
                 }
             }
