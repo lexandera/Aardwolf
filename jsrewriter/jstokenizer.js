@@ -8,19 +8,6 @@ function tokenize(str, onToken) {
     var pos = 0;
     var validRegexPos = false;
     
-    var onTokenInternal = function(token, type) {
-        /* A "/" following a variable or a number is a divison operator.
-           A slash following an operator is a regex literal delimiter. */
-        if (['word', 'number'].indexOf(type) > -1) {
-            validRegexPos = false;
-        }
-        else if (type === 'char') {
-            validRegexPos = true;
-        }
-        
-        onToken(token, type);
-    }
-    
     while (pos < len) {
         var c = str[pos];
         
@@ -48,6 +35,19 @@ function tokenize(str, onToken) {
         else {
             extractChar();
         }
+    }
+    
+    function onTokenInternal(token, type) {
+        /* A "/" following a variable or a number is a divison operator.
+           A slash following an operator is a regex literal delimiter. */
+        if (['word', 'number'].indexOf(type) > -1) {
+            validRegexPos = false;
+        }
+        else if (type === 'char') {
+            validRegexPos = true;
+        }
+        
+        onToken(token, type);
     }
     
     function extractSingleLineComment() {
