@@ -14,16 +14,18 @@ window.Aardwolf = new (function() {
         req.open('GET', serverUrl + '/mobile/incoming', true);
         req.onreadystatechange = function () {
             if (req.readyState == 4) {
-                var cmd = JSON.parse(req.responseText);             
+                if (req.responseText) {
+                    var cmd = JSON.parse(req.responseText);            
+                        
+                    if (cmd.command == 'eval') {
+                        doEval(function(aardwolfEval) { return eval(aardwolfEval); }, cmd);
+                    }
+                    else {
+                        processCommand(cmd);
+                    }
                     
-                if (cmd.command == 'eval') {
-                    doEval(function(aardwolfEval) { return eval(aardwolfEval); }, cmd);
+                    setTimeout(listenToServer, 0);
                 }
-                else {
-                    processCommand(cmd);
-                }
-                
-                listenToServer();
             }
         };
         req.send(null);
