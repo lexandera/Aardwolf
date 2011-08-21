@@ -38,13 +38,12 @@ function tokenize(str, onToken) {
     }
     
     function onTokenInternal(token, type) {
-        /* A "/" following a variable or a number is a divison operator.
-           A slash following an operator is a regex literal delimiter. */
-        if (['word', 'number'].indexOf(type) > -1) {
-            validRegexPos = false;
-        }
-        else if (type === 'char') {
+        /* A slash following an assigment operator, a semicolon or an 
+           opening paren can be a regex literal delimiter. */
+        if (type === 'char' && ':=;({'.indexOf(token) > -1) {
             validRegexPos = true;
+        } else {
+            validRegexPos = false;
         }
         
         onToken(token, type);

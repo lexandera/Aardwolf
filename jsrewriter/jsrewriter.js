@@ -32,6 +32,10 @@ function addDebugStatements(filePath, text) {
             return;
         }
         
+        if (token == '"use strict"' || token == "'use strict'") {
+            token = '/* Aardwolf cannot work in strict mode. Disabling. '+token.split('').join('_')+' */';
+        }
+        
         /* 
             Whenever we encounter some code:
             - if it's after a semicolon and a newline, or at the beginning of a function, 
@@ -42,7 +46,11 @@ function addDebugStatements(filePath, text) {
             Yes, this rewriter assumes that you're using semicolons in your code.
         */
         if (['word', 'number', 'string', 'char'].indexOf(type) > -1) {
-            if (semicolonOrFunctionBoundryEncountered && newlineEncountered) {
+            if (type != 'char' &&
+                token != 'else' &&
+                semicolonOrFunctionBoundryEncountered && 
+                newlineEncountered)
+            {
                 var isDebuggerStatement = token === 'debugger';
                 out.push(buildDebugStatement(filePath, line, isDebuggerStatement));
             }
@@ -86,6 +94,11 @@ function addDebugStatements(filePath, text) {
             else if (token === '\n') {
                 ++line;
                 newlineEncountered = true;
+            }
+            else if (type == 'comment') {
+                /* comments can span multiple lines so we need to adjust line count accordingly */
+                var parts = token.split('\n');
+                line += parts.length - 1;
             }
             out.push(token);
         }
