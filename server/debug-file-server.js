@@ -2,6 +2,7 @@
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
+var url = require('url');
 
 var config = require('../config/config.defaults.js');
 var jsrewriter = require('../jsrewriter/jsrewriter.js');
@@ -21,7 +22,7 @@ function run() {
 
 
 function DebugFileServer(req, res) {
-    var requestedFile = req.url;
+    var requestedFile = url.parse(req.url).pathname;
     var jsFileServerBaseDir = path.normalize(config.jsFileServerBaseDir);
     var fullRequestedFilePath = path.join(jsFileServerBaseDir, requestedFile);
     
