@@ -63,7 +63,6 @@
 .button.green
 {
     background-color: #DDF906;
-    background-image: -webkit-gradient(linear, left top, left bottom, to(#e8ff38), from(#92be13));
     background-image: -webkit-linear-gradient(top, #e8ff38, #92be13);
     background-image: -moz-linear-gradient(top,    #e8ff38, #92be13);
     background-image: -ms-linear-gradient(top,     #e8ff38, #92be13);
@@ -76,7 +75,6 @@
 .button.green:hover
 {
     background-color: #DDF906;
-    background-image: -webkit-gradient(linear, left top, left bottom, to(#e8ff38), from(#a8db16));
     background-image: -webkit-linear-gradient(top, #e8ff38, #a8db16);
     background-image: -moz-linear-gradient(top,    #e8ff38, #a8db16);
     background-image: -ms-linear-gradient(top,     #e8ff38, #a8db16);
@@ -92,12 +90,11 @@
 .button.blue
 {
     background-color: #DDF906;
-    background-image: -webkit-gradient(linear, left top, left bottom, to(#388DE5), from(#79BBFF));
-    background-image: -webkit-linear-gradient(top, #79BBFF, #388DE5);
+    background-image: -webkit-linear-gradient(top, #92e3fe, #4d9cee);
     background-image: -moz-linear-gradient(top,    #92e3fe, #4d9cee);
-    background-image: -ms-linear-gradient(top,     #79BBFF, #388DE5);
-    background-image: -o-linear-gradient(top,      #79BBFF, #388DE5);
-    background-image: linear-gradient(top,         #79BBFF, #388DE5);
+    background-image: -ms-linear-gradient(top,     #92e3fe, #4d9cee);
+    background-image: -o-linear-gradient(top,      #92e3fe, #4d9cee);
+    background-image: linear-gradient(top,         #92e3fe, #4d9cee);
     border: 1px solid #777;
 }
 
@@ -105,12 +102,11 @@
 .button.blue:hover
 {
     background-color: #DDF906;
-    background-image: -webkit-gradient(linear, left top, left bottom, to(#e8ff38), from(#a8db16));
-    background-image: -webkit-linear-gradient(top, #e8ff38, #a8db16);
+    background-image: -webkit-linear-gradient(top, #92e3fe, #81d1fe);
     background-image: -moz-linear-gradient(top,    #92e3fe, #81d1fe);
-    background-image: -ms-linear-gradient(top,     #e8ff38, #a8db16);
-    background-image: -o-linear-gradient(top,      #e8ff38, #a8db16);
-    background-image: linear-gradient(top,         #e8ff38, #a8db16);
+    background-image: -ms-linear-gradient(top,     #92e3fe, #81d1fe);
+    background-image: -o-linear-gradient(top,      #92e3fe, #81d1fe);
+    background-image: linear-gradient(top,         #92e3fe, #81d1fe);
     border: 1px solid #777;
 }
 
