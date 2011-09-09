@@ -41,8 +41,9 @@ function AardwolfServer(req, res) {
         switch (req.url) {
             case '/mobile/init':
                 mobileDispatcher = new Dispatcher();
-                desktopDispatcher = new Dispatcher();
+                /*desktopDispatcher = new Dispatcher();*/
                 mobileDispatcher.setClient(res);
+                desktopDispatcher.addMessage(data);
                 break;
                 
             case '/mobile/console':

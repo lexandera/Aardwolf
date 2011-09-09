@@ -3,6 +3,10 @@ var jsFiles = {};
 var $codeContainer;
 var $code;
 
+var $startBtn;
+var $continueBtn;
+var $stepBtn;
+
 $(function() {
     $('#breakpoints').val(JSON.stringify([['/calc.js', 2], ['/calc.js', 21], ['/calc.js', 32]]));
     $('#eval').val("");
@@ -14,11 +18,19 @@ $(function() {
     $('#btn-continue').click(breakpointContinue);
     $('#btn-step').click(breakpointStep);
     
+    $startBtn = $('#btn-start');
+    $continueBtn = $('#btn-continue'); 
+    $stepBtn = $('#btn-step'); 
+    
     $codeContainer = $('#code-container');
     $code = $('#code');
+    
+    listenToServer();
 });
 
 function initDebugger() {
+    disableStartBtn();
+    
     var fileList = getFromServer('/files/list');
     jsFiles = {};
     
@@ -27,9 +39,7 @@ function initDebugger() {
         jsFiles[f] = fdata.data;
     });
     
-    
     postToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
-    listenToServer();
 }
 
 function updateBreakpoints() {
@@ -46,11 +56,13 @@ function evalCodeRemotely() {
 
 function breakpointContinue() {
     removeLineHightlight();
+    disableContinueAndStep();
     postToServer({ command: 'breakpoint-continue' });
 }
 
 function breakpointStep() {
     removeLineHightlight();
+    disableContinueAndStep();
     postToServer({ command: 'breakpoint-step' });
 }
 
@@ -80,6 +92,10 @@ function listenToServer() {
     req.send(null);
 }
 
+function showMobileConnected() {
+    enableStartBtn();
+}
+
 function showBreakpoint(data) {
     var codeLines = jsFiles[data.file.substr(1)]
         .split('\n')
@@ -99,7 +115,8 @@ function showBreakpoint(data) {
     var heightPerLine = codeHeight / numLines;
     
     if (data.line) {
-        highlightLine(data.line, numLines)
+        highlightLine(data.line, numLines);
+        enableContinueAndStep();
     }
     
     if (textAreaContentHeight > textAreaHeight) {
@@ -126,8 +143,29 @@ function removeLineHightlight() {
     $code.css({ 'background-image': '' });
 }
 
+function enableContinueAndStep() {
+    $continueBtn.attr('disabled', null);
+    $stepBtn.attr('disabled', null);
+}
+
+function disableContinueAndStep() {
+    $continueBtn.attr('disabled', true);
+    $stepBtn.attr('disabled', true);
+}
+
+function enableStartBtn() {
+    $startBtn.attr('disabled', null);
+}
+
+function disableStartBtn() {
+    $startBtn.attr('disabled', true);
+}
+
 function processOutput(data) {
     switch (data.command) {
+        case 'mobile-connected':
+            showMobileConnected();
+            break;
         case 'print-message': 
             writeToConsole('<b>'+data.type + '</b>: ' + data.message);
             break;

@@ -113,7 +113,7 @@ window.Aardwolf = new (function() {
     
     this.init = function() {
         replaceConsole();
-        var cmd = sendToServer('/init', {});
+        var cmd = sendToServer('/init', { command: 'mobile-connected'});
         if (cmd) {
             processCommand(cmd)
         }
