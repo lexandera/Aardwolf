@@ -6,6 +6,7 @@ var $code;
 var $startBtn;
 var $continueBtn;
 var $stepBtn;
+var $stackTrace;
 
 $(function() {
     $('#breakpoints').val(JSON.stringify([['/calc.js', 2], ['/calc.js', 21], ['/calc.js', 32]]));
@@ -20,7 +21,8 @@ $(function() {
     
     $startBtn = $('#btn-start');
     $continueBtn = $('#btn-continue'); 
-    $stepBtn = $('#btn-step'); 
+    $stepBtn = $('#btn-step');
+    $stackTrace = $('#stack');
     
     $codeContainer = $('#code-container');
     $code = $('#code');
@@ -57,12 +59,14 @@ function evalCodeRemotely() {
 function breakpointContinue() {
     removeLineHightlight();
     disableContinueAndStep();
+    clearStackTrace();
     postToServer({ command: 'breakpoint-continue' });
 }
 
 function breakpointStep() {
     removeLineHightlight();
     disableContinueAndStep();
+    clearStackTrace();
     postToServer({ command: 'breakpoint-step' });
 }
 
@@ -106,7 +110,7 @@ function showBreakpoint(data) {
         });
 
     $code.text(codeLines.join('\n'));
-    $('#stack').text(data.stack.join('\n'));
+    $stackTrace.text(data.stack.join('\n'));
     
     var numLines = codeLines.length;
     var textAreaHeight = $codeContainer.height();
@@ -159,6 +163,10 @@ function enableStartBtn() {
 
 function disableStartBtn() {
     $startBtn.attr('disabled', true);
+}
+
+function clearStackTrace() {
+    $stackTrace.text('');
 }
 
 function processOutput(data) {

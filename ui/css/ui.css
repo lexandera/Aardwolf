@@ -128,7 +128,9 @@ textarea {
     padding: 3px;
 }
 
-
+pre {
+    margin: 0;
+}
 
 
 
