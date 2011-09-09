@@ -17,6 +17,7 @@ div, textarea {
 
 h2 {
     margin: 0;
+    margin-bottom: 5px;
     padding: 0;
     clear: both;
     font-weight: bold;
@@ -27,6 +28,15 @@ h2 {
     -webkit-user-select: none;
     user-select: none;
     cursor: default;
+    color: #333;
+}
+
+h2:not(:first-of-type) {
+    margin-top: 10px;
+}
+
+pre {
+    margin: 0;
 }
 
 #top-toolbar {
@@ -128,9 +138,6 @@ textarea {
     padding: 3px;
 }
 
-pre {
-    margin: 0;
-}
 
 
 
