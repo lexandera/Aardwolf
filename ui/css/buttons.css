@@ -18,14 +18,14 @@
     filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#eeeeee', EndColorStr='#cccccc');
     border: 1px solid #777;
     padding: 0 1.5em;
-    margin: 0.5em;
+    margin: 0.5em 0.5em 0.5em 0;
     font: bold 1em/1.9em Arial, Helvetica;
     text-decoration: none;
     color: #333;
     text-shadow: 0 1px 0 rgba(255,255,255,.8);
-    -moz-border-radius: .2em;
-    -webkit-border-radius: .2em;
-    border-radius: .2em;
+    -moz-border-radius: .3em;
+    -webkit-border-radius: .3em;
+    border-radius: .3em;
     -moz-box-shadow: 0 0 1px 1px rgba(255,255,255,.8) inset, 0 1px 0 rgba(0,0,0,.3);
     -webkit-box-shadow: 0 0 1px 1px rgba(255,255,255,.8) inset, 0 1px 0 rgba(0,0,0,.3);
     box-shadow: 0 0 1px 1px rgba(255,255,255,.8) inset, 0 1px 0 rgba(0,0,0,.3);
@@ -132,9 +132,9 @@
     -moz-box-shadow: 1px 0 0 rgba(0,0,0,.5), 2px 0 0 rgba(255,255,255,.5);
     -webkit-box-shadow: 1px 0 0 rgba(0,0,0,.5), 2px 0 0 rgba(255,255,255,.5);
     box-shadow: 1px 0 0 rgba(0,0,0,.5), 2px 0 0 rgba(255,255,255,.5);
-    -moz-border-radius: .15em 0 0 .15em;
-    -webkit-border-radius: .15em 0 0 .15em;
-    border-radius: .15em 0 0 .15em;
+    -moz-border-radius: .20em 0 0 .20em;
+    -webkit-border-radius: .20em 0 0 .20em;
+    border-radius: .20em 0 0 .20em;
 }
 
 /* Buttons and inputs */

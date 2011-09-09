@@ -1,0 +1,136 @@
+
+body, html {
+    height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, Tahoma, Verdana, sans-serif;
+    margin: 0;
+    padding: 0px;
+}
+
+div, textarea {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+h2 {
+    margin: 0;
+    padding: 0;
+    clear: both;
+    font-weight: bold;
+    font-size: 16px;
+    
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+#top-toolbar {
+    position: absolute;
+    height: 50px;
+    width: 100%;
+    z-index: 500;
+    
+    padding: 5px 0 5px 10px;
+    border-bottom: 1px solid #aaa;
+    
+    font-size: 14px;
+    
+    background-image: -webkit-linear-gradient(top, #F0F0F0, #ccc);
+    background-image: -moz-linear-gradient(top,    #F0F0F0, #ccc);
+    background-image: -ms-linear-gradient(top,     #F0F0F0, #ccc);
+    background-image: -o-linear-gradient(top,      #F0F0F0, #ccc);
+    background-image: linear-gradient(top,         #F0F0F0, #ccc);
+}
+
+#btn-start {
+    margin-right: 30px;
+}
+
+#center-panels {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    
+    padding-top: 50px;
+    padding-right: 350px;
+    padding-bottom: 250px;
+    
+    margin: 0;
+    border: 0;
+    
+    overflow: hidden;
+    z-index: 400;
+}
+
+#code-container {
+    background: url(../img/code-bg.png);
+    background-position: -8px 0px;
+    background-repeat: repeat-y;
+    height: 100%;
+    overflow: auto;
+}
+
+#code-container pre {
+    margin: 5px 0 50px 0;
+}
+
+
+#sidebar {
+    display: block;
+    width: 350px;
+    padding: 5px;
+    
+    position: absolute;
+    right: 0px;
+    top: 50px;
+    bottom: 250px;
+    
+    overflow: hidden;
+    border-left: 2px solid #bbb;
+    background: #f7f7f7;
+}
+
+#output {
+    border-top: 2px solid #bbb;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 250px;
+    width: 100%;
+    
+    background: white;
+    font-family: "Courier New";
+    font-size: 14px;
+    
+    z-index: 500;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+
+textarea {
+    width: 100%;
+    font-family: "Courier New";
+    font-size: 14px;
+    min-height: 75px;
+    max-width: 100%;
+}
+
+
+#output div {
+    border-bottom: 1px solid #bbb;
+    padding: 3px;
+}
+
+
+
+
+
+
+

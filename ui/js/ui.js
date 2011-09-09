@@ -114,10 +114,10 @@ function highlightLine(line, numLines) {
     var heightPerLine = codeHeight / numLines;
     
     $code.css({
-        'background-image': 'url("/ui/img/breakpoint-arrow.png"), url("/ui/img/breakpoint-bg.png")',
-        'background-repeat': 'no-repeat, no-repeat',
+        'background-image': 'url("img/breakpoint-arrow.png"), url("img/breakpoint-bg.png")',
+        'background-repeat': 'no-repeat, no-repeat, repeat-y',
         'background-size': '9px 7px, 100% '+Math.round(heightPerLine)+'px',
-        'background-position': '3px '+Math.round((line - 1) * heightPerLine + ((heightPerLine - 7) / 2))+'px, '+
+        'background-position': '5px '+Math.round((line - 1) * heightPerLine + ((heightPerLine - 7) / 2))+'px, '+
                                '0px '+Math.round((line - 1) * heightPerLine)+'px'
     });
 }
@@ -144,7 +144,7 @@ function processOutput(data) {
 
 var lineNum = 0;
 function writeToConsole(msg) {
-    $('<div></div>').html((++lineNum) + ': ' + msg).prependTo($('#output'));
+    $('<div></div>').html((++lineNum) + ': ' + msg).appendTo($('#output'))[0].scrollIntoView();
 }
 
 

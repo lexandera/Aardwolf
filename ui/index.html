@@ -5,54 +5,54 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-        <script type="text/javascript" src="ui.js"></script>
+        <script type="text/javascript" src="js/ui.js"></script>
         
-        <link href="ui.css" rel="stylesheet" type="text/css" />
-        <link href="buttons.css" rel="stylesheet" type="text/css" />
+        <link href="css/ui.css" rel="stylesheet" type="text/css" />
+        <link href="css/buttons.css" rel="stylesheet" type="text/css" />
         
     </head>
     
     <body>
         <div id="top-toolbar">
-            <button id="btn-start" class="button blue">START</button> &nbsp;&nbsp;&nbsp;&nbsp;
-            <button id="btn-continue" class="button play green">continue</button>
-            <button id="btn-step" class="button next green">step</button>
+            <button id="btn-start" class="button blue" disabled>START</button>
+            <button id="btn-continue" class="button play green" disabled>continue</button>
+            <button id="btn-step" class="button next green" disabled>step</button>
         </div>
     
-        <div class="notatable">
-            <div class="notarow">
-                <div class="notacell">
-                    <div id="code-container">
-                        <pre id="code">&nbsp;</pre>
-                    </div>
-                </div>
-                <div class="notacell" style="width: 350px; padding-left: 20px;">
-                    Breakpoints:<br/>
-                    <textarea id="breakpoints"></textarea>
-                    <button id="btn-update-breakpoints" class="button small">update breakpoints</button>
-                    <button id="btn-breakon-next" class="button small">break on next</button>
+    
+        <div id="center-panels">
+            <div id="code-container">
+                <pre id="code">&nbsp;</pre>
+            </div>
+            
+            <div id="sidebar" class="">
+                <h2>Breakpoints:</h2>
+                <textarea id="breakpoints"></textarea>
+                <button id="btn-update-breakpoints" class="button small">update breakpoints</button>
+                <button id="btn-breakon-next" class="button small">break on next</button>
+            
+                <br/>
+                <br/>
                 
-                    <br/>
-                    <br/>
-                    
-                    Console:<br/>
-                    <textarea id="eval"></textarea>
-                    <br/>
-                    <button id="btn-eval" class="button small">eval()</button>
-                    
-                    <br/>
-                    <br/>
-                    
-                    Call stack:
-                    <pre id="stack">
-                    </pre>
+                <h2>Console:</h2>
+                <textarea id="eval"></textarea>
+                <br/>
+                <button id="btn-eval" class="button small">eval()</button>
                 
-                </div>
+                <br/>
+                <br/>
+                
+                <h2>Call stack</h2>
+                <pre id="stack">
+                </pre>
+            
             </div>
         </div>
-        Output: <br/>
+        
         <div id="output">
         </div>
+        
+        
     </body>
 </html>
 
