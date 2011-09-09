@@ -8,13 +8,15 @@
         <script type="text/javascript" src="ui.js"></script>
         
         <link href="ui.css" rel="stylesheet" type="text/css" />
+        <link href="buttons.css" rel="stylesheet" type="text/css" />
+        
     </head>
     
     <body>
         <div id="top-toolbar">
-            <button id="btn-start">START</button> &nbsp;&nbsp;&nbsp;&nbsp;
-            <button id="btn-continue">continue</button>
-            <button id="btn-step">step</button>
+            <button id="btn-start" class="button blue">START</button> &nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="btn-continue" class="button play green">continue</button>
+            <button id="btn-step" class="button next green">step</button>
         </div>
     
         <div class="notatable">
@@ -24,11 +26,11 @@
                         <pre id="code">&nbsp;</pre>
                     </div>
                 </div>
-                <div class="notacell" style="width: 40%; padding-left: 20px;">
+                <div class="notacell" style="width: 350px; padding-left: 20px;">
                     Breakpoints:<br/>
                     <textarea id="breakpoints"></textarea>
-                    <button id="btn-update-breakpoints">update breakpoints</button>
-                    <button id="btn-breakon-next">break on next</button>
+                    <button id="btn-update-breakpoints" class="button small">update breakpoints</button>
+                    <button id="btn-breakon-next" class="button small">break on next</button>
                 
                     <br/>
                     <br/>
@@ -36,7 +38,7 @@
                     Console:<br/>
                     <textarea id="eval"></textarea>
                     <br/>
-                    <button id="btn-eval">eval()</button>
+                    <button id="btn-eval" class="button small">eval()</button>
                     
                     <br/>
                     <br/>
