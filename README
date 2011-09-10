@@ -10,7 +10,7 @@ Currently supported features:
 - break on next
 - step/continue execution control
 - stack listing
-- exception reporting (also in async calls)
+- exception reporting (also for exceptions thrown in async calls)
 - JavaScript console remoting
 
 
@@ -37,9 +37,8 @@ Setting it up:
   address you entered into the config file in the previous step can really be accessed from your 
   phone. This is where your phone will load the samples from, so it must work.
 - Start the server by running "node app.js"
-- After the server starts up, open http://localhost:8000 in your desktop browser.
-  You should see a very ugly debugger appear UI.
-- Open http://ip-or-hostname-of-your-computer:8500/calc.html on your phone
-  (nothing will appear until the next step).
-- Press the "start" button in the debugger UI. You're now debugging the exmple script.
+- After the server starts up, open http://localhost:8000 in your desktop browser. The debugger UI should appear.
+- Open http://ip-or-hostname-of-your-computer:8500/calc.html on your phone and wait for the page to load.
+  The line "Mobile device connected." should appear in the UI's output pane.
+- You're now debugging the "calculator" example script.
 
