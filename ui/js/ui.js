@@ -3,7 +3,6 @@ var jsFiles = {};
 var $codeContainer;
 var $code;
 
-var $startBtn;
 var $continueBtn;
 var $stepBtn;
 var $stackTrace;
@@ -12,14 +11,12 @@ $(function() {
     $('#breakpoints').val(JSON.stringify([['/calc.js', 2], ['/calc.js', 21], ['/calc.js', 32]]));
     $('#eval').val("");
     
-    $('#btn-start').click(initDebugger);
     $('#btn-update-breakpoints').click(updateBreakpoints);
     $('#btn-breakon-next').click(setBreakOnNext);
     $('#btn-eval').click(evalCodeRemotely);
     $('#btn-continue').click(breakpointContinue);
     $('#btn-step').click(breakpointStep);
     
-    $startBtn = $('#btn-start');
     $continueBtn = $('#btn-continue'); 
     $stepBtn = $('#btn-step');
     $stackTrace = $('#stack');
@@ -31,8 +28,6 @@ $(function() {
 });
 
 function initDebugger() {
-    disableStartBtn();
-    
     var fileList = getFromServer('/files/list');
     jsFiles = {};
     
@@ -96,10 +91,6 @@ function listenToServer() {
     req.send(null);
 }
 
-function showMobileConnected() {
-    enableStartBtn();
-}
-
 function showBreakpoint(data) {
     var codeLines = jsFiles[data.file.substr(1)]
         .split('\n')
@@ -157,14 +148,6 @@ function disableContinueAndStep() {
     $stepBtn.attr('disabled', true);
 }
 
-function enableStartBtn() {
-    $startBtn.attr('disabled', null);
-}
-
-function disableStartBtn() {
-    $startBtn.attr('disabled', true);
-}
-
 function clearStackTrace() {
     $stackTrace.text('');
 }
@@ -172,7 +155,8 @@ function clearStackTrace() {
 function processOutput(data) {
     switch (data.command) {
         case 'mobile-connected':
-            showMobileConnected();
+            writeToConsole('Mobile device connected.');
+            initDebugger();
             break;
         case 'print-message': 
             writeToConsole('<b>'+data.type + '</b>: ' + data.message);

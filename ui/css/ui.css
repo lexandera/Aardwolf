@@ -57,10 +57,6 @@ pre {
     background-image: linear-gradient(top,         #F0F0F0, #ccc);
 }
 
-#btn-start {
-    margin-right: 30px;
-}
-
 #center-panels {
     position: relative;
     display: block;
