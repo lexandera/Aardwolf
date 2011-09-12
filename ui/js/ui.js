@@ -92,15 +92,40 @@ function listenToServer() {
 }
 
 function showBreakpoint(data) {
-    var codeLines = jsFiles[data.file.substr(1)]
+    var codeTokens = [];
+    var keywordList = [
+        'var', 'function', 'if', 'else', 'while', 'for', 'do', 'in',
+        'break', 'continue', 'switch', 'return', 'debugger'
+    ];
+    
+    tokenize(jsFiles[data.file.substr(1)], function(token, type) {
+        var pre = '';
+        var post = '';
+        
+        if (type === 'word' && keywordList.indexOf(token) > -1) {
+            pre = '<span class="keyword">';
+            post = '</span>';
+        }
+        else if (['string', 'comment', 'number'].indexOf(type) > -1) {
+            pre = '<span class="'+type+'">';
+            post = '</span>';
+        }
+        
+        codeTokens.push(pre);
+        codeTokens.push(token.replace(/</g, '&lt;'));
+        codeTokens.push(post);
+    });
+    
+    var codeLines = codeTokens
+        .join('')
         .split('\n')
         .map(function(x, i) {
             var num = String(i+1);
-            var paddedNum = '      '.substr(num.length) + num + ' ';
+            var paddedNum = '      '.substr(num.length) + '<span class="linenum">' + num + ' </span>';
             return paddedNum + ' ' + x;
         });
 
-    $code.text(codeLines.join('\n'));
+    $code.html(codeLines.join('\n'));
     $stackTrace.text(data.stack.join('\n'));
     
     var numLines = codeLines.length;

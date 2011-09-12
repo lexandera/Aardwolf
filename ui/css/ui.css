@@ -1,6 +1,7 @@
 
 body, html {
     height: 100%;
+    font-size: 14px;
 }
 
 body {
@@ -48,8 +49,6 @@ pre {
     padding: 5px 0 5px 10px;
     border-bottom: 1px solid #aaa;
     
-    font-size: 14px;
-    
     background-image: -webkit-linear-gradient(top, #F0F0F0, #ccc);
     background-image: -moz-linear-gradient(top,    #F0F0F0, #ccc);
     background-image: -ms-linear-gradient(top,     #F0F0F0, #ccc);
@@ -82,8 +81,30 @@ pre {
     overflow: auto;
 }
 
-#code-container pre {
+#code {
+    white-space: pre;
+    font-family: "Courier New", monospace;
     margin: 5px 0 50px 0;
+}
+
+#code .comment {
+    color: green;
+}
+
+#code .keyword {
+    color: blue;
+}
+
+#code .string {
+    color: purple;
+}
+
+#code .number {
+    color: brown;
+}
+
+#code .linenum {
+    color: black;
 }
 
 
@@ -112,7 +133,6 @@ pre {
     
     background: white;
     font-family: "Courier New";
-    font-size: 14px;
     
     z-index: 500;
     overflow-x: hidden;
