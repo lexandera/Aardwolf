@@ -8,7 +8,7 @@ var $stepBtn;
 var $stackTrace;
 
 $(function() {
-    $('#breakpoints').val(JSON.stringify([['/calc.js', 2], ['/calc.js', 21], ['/calc.js', 32]]));
+    $('#breakpoints').val(JSON.stringify([['/calc.js', 11], ['/calc.js', 25], ['/calc.js', 37]]));
     $('#eval').val("");
     
     $('#btn-update-breakpoints').click(updateBreakpoints);
