@@ -94,8 +94,8 @@ function listenToServer() {
 function showBreakpoint(data) {
     var codeTokens = [];
     var keywordList = [
-        'var', 'function', 'if', 'else', 'while', 'for', 'do', 'in',
-        'break', 'continue', 'switch', 'return', 'debugger'
+        'var', 'function', 'if', 'else', 'while', 'for', 'do', 'in', 'break', 'continue',
+        'switch', 'return', 'debugger', 'try', 'catch', 'throw', 'true', 'false'
     ];
     
     tokenize(jsFiles[data.file.substr(1)], function(token, type) {
