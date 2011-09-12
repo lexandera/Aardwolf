@@ -104,7 +104,9 @@ function addDebugStatements(filePath, text) {
         }
     });
 
-    return out.join('');
+    return exceptionInterceptorStart + 
+           out.join('') + 
+           exceptionInterceptorEnd;
 }
 
 
