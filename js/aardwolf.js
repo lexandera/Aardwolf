@@ -6,6 +6,8 @@ window.Aardwolf = new (function() {
     var breakpoints = {};
     var breakOnNext = false;
     var asyncXHR = null;
+    var lastFile = '';
+    var lastLine = '';
     
     function listenToServer() {
         dropCommandConnection();
@@ -121,6 +123,11 @@ window.Aardwolf = new (function() {
     };
     
     this.updatePosition = function(file, line, isDebuggerStatement, evalScopeFunc) {
+        /* Webkit's exceptions don't contain any useful file and line data,
+           so we keep track of this manually for exception reporting purposes. */
+        lastFile = file;
+        lastLine = line;
+        
         while (true) {
             var shouldBreak = (breakpoints[file] && breakpoints[file][line]) || isDebuggerStatement || breakOnNext;
             if (!shouldBreak) {
@@ -147,7 +154,7 @@ window.Aardwolf = new (function() {
     };
     
     this.reportException = function(e) {
-        console.error('EXCEPTION: '+e.toString());
+        sendToServer('/console', { command: 'report-exception', message: e.toString(), file: lastFile, line: lastLine, stack: getStack().slice(1) });
     }
     
 })();

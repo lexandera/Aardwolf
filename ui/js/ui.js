@@ -164,6 +164,9 @@ function processOutput(data) {
         case 'print-eval-result':
             writeToConsole('<b>EVAL</b> INPUT: ' + data.input + ' RESULT: ' + data.result);
             break;
+        case 'report-exception':
+            writeToConsole('<b>EXCEPTION</b>: ' + data.message + ' at ' + data.file + ', line ' + data.line);
+            break;
         case 'report-breakpoint':
             showBreakpoint(data);
             break;
