@@ -23,22 +23,63 @@ It consists of the following parts:
 
 In order to run the examples you will need:
 - Node.js. Get it here: http://nodejs.org/#download
-- An Android 2.x/iOS/WindowsPhone7 device or emulator. (although running them from a Firefox/Chrome/Safari window will also work...)
+- An Android 2.x/iOS/WindowsPhone7 device or emulator (although running them from a Firefox/Chrome/Safari window will also work)
 
 
-Setting it up:
-- Download the source code.
+Setting it up
+----------------------------------------------------------------------------------------------------
+
+- Begin by installing node.js and either Mercurial or Git
+
+- Get the Aardwolf source code
+  
+    using Mercurial: hg clone https://bitbucket.org/lexandera/aardwolf
+    using Git: git clone git://github.com/lexandera/Aardwolf.git
+
 - Create the file config/config.local.js and paste into it the following lines:
-
+  
     var config = require('../config/config.defaults.js');
     config.serverHost = 'ip-or-hostname-of-your-computer';
 
-- Make sure that access to the port 8500 on your computer is not blocked by a firewall and that the 
-  address you entered into the config file in the previous step can really be accessed from your 
-  phone. This is where your phone will load the samples from, so it must work.
 - Start the server by running "node app.js"
+
 - After the server starts up, open http://localhost:8000 in your desktop browser. The debugger UI should appear.
+
 - Open http://ip-or-hostname-of-your-computer:8500/calc.html on your phone and wait for the page to load.
   The line "Mobile device connected." should appear in the UI's output pane.
+
 - You're now debugging the "calculator" example script.
+
+
+If you're having problems opening the example, make sure that access to the port 8500 on your computer
+is not blocked by a firewall and that the address you entered into the config file can really be 
+accessed from your phone. This is where your phone will load the samples from, so it must work. 
+You will get best results by connecting both you computer and your phone to the same WiFi network.
+
+
+Debugging your own code
+----------------------------------------------------------------------------------------------------
+
+The procedure is the same as above, except:
+
+- Put the following in your config/config.local.js file:
+  
+    var config = require('../config/config.defaults.js');
+    config.serverHost = 'ip-or-hostname-of-your-computer';
+    config.jsFileServerBaseDir = '/path/to/www/root';
+  
+  Start or restart the server for changes to take effect.
+    
+- In your HTML page include the aardwolf.js debug library as the very first JS file and change the
+  paths of included files to point to the files modified by Aardwolf:
+  
+    <script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/aardwolf.js"></script>
+    <script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/some-script.js"></script>
+    <script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/some-other-script.js"></script>
+  
+- Reload the debugger UI first, then reload the page you just modified.
+  The line "Mobile device connected." should appear in the UI's output pane.
+
+- You should now be able to evaluate code remotely, set breakpoints, etc.
+
 
