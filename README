@@ -2,9 +2,9 @@
 Aardwolf is a remote JavaScript debugger for Android/iOS/WindowsPhone7 and is written in JavaScript.
 It's available under the MIT license.
 
-For some mindless drivel, see: http://lexandera.com/aardwolf/
+Home page: http://lexandera.com/aardwolf/
 
-Currently supported features:
+Currently it supports:
 - breakpoints
 - code evaluation at breakpoint
 - break on next
@@ -23,7 +23,7 @@ It consists of the following parts:
 
 In order to run the examples you will need:
 - Node.js. Get it here: http://nodejs.org/#download
-- An Android 2.x/iOS/WindowsPhone7 device or emulator. (but running them from a Firefox/Chrome/Safari window will also work...)
+- An Android 2.x/iOS/WindowsPhone7 device or emulator. (although running them from a Firefox/Chrome/Safari window will also work...)
 
 
 Setting it up:
