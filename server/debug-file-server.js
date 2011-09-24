@@ -5,8 +5,8 @@ var fs = require('fs');
 var url = require('url');
 
 var config = require('../config/config.defaults.js');
-var jsrewriter = require('../jsrewriter/jsrewriter.js');
 var util = require('./server-util.js');
+
 
 function run() {
     if (!path.existsSync(config.jsFileServerBaseDir)) {
@@ -34,9 +34,17 @@ function DebugFileServer(req, res) {
     else if (path.existsSync(fullRequestedFilePath) &&
              fullRequestedFilePath.indexOf(jsFileServerBaseDir) === 0)
     {
+        var rewriter;
         if (requestedFile.substr(-3) == '.js') {
+            rewriter = require('../jsrewriter/jsrewriter.js');
+        }
+        else if (requestedFile.substr(-7) == '.coffee') {
+            rewriter = require('../jsrewriter/coffeerewriter.js');
+        }
+        
+        if (rewriter) {
             var content = fs.readFileSync(fullRequestedFilePath).toString();
-            content = jsrewriter.addDebugStatements(requestedFile, content);
+            content = rewriter.addDebugStatements(requestedFile, content);
             res.writeHead(200, {'Content-Type': 'application/javascript'});
             res.end(content);
         }

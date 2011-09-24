@@ -38,7 +38,7 @@ function getJSFilesList() {
             var fullPath = path.join(dir, f);
             var stat = fs.statSync(fullPath);
             if (stat.isFile()) {
-                if (fullPath.substr(-3) == '.js') {
+                if (fullPath.substr(-3) == '.js' || fullPath.substr(-7) == '.coffee') {
                     jsFiles.push(fullPath.substr(baseDir.length +1));
                 }
             }
