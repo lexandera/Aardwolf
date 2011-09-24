@@ -98,6 +98,8 @@ function showBreakpoint(data) {
         'switch', 'return', 'debugger', 'try', 'catch', 'throw', 'true', 'false'
     ];
     
+    var tokenize = data.file.substr(-7) == '.coffee' ? tokenize_coffeescript : tokenize_js;
+    
     tokenize(files[data.file.substr(1)], function(token, type) {
         var pre = '';
         var post = '';

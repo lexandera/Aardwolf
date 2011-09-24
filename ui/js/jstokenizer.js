@@ -3,7 +3,7 @@
    brackets and semicolons, so it doesn't need to be complete as long as it correctly handles
    multi-word tokens such as strings and comments.
 */
-function tokenize(str, onToken) {
+function tokenize_js(str, onToken) {
     var len = str.length;
     var pos = 0;
     var validRegexPos = false;
