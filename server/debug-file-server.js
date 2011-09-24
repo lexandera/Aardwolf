@@ -9,37 +9,37 @@ var util = require('./server-util.js');
 
 
 function run() {
-    if (!path.existsSync(config.jsFileServerBaseDir)) {
-        console.error('ERROR: Path does not exist: ' + config.jsFileServerBaseDir);
+    if (!path.existsSync(config.fileServerBaseDir)) {
+        console.error('ERROR: Path does not exist: ' + config.fileServerBaseDir);
         process.exit(1);
     }
     
-    /* Serves JS files with debug statements inserted */
-    http.createServer(DebugFileServer).listen(config.jsFileServerPort, null, function() {
-        console.log('JS file server listening for requests on port ' + config.jsFileServerPort + '.');
+    /* Serves files with debug statements inserted */
+    http.createServer(DebugFileServer).listen(config.fileServerPort, null, function() {
+        console.log('File server listening for requests on port ' + config.fileServerPort + '.');
     });
 }
 
 
 function DebugFileServer(req, res) {
     var requestedFile = url.parse(req.url).pathname;
-    var jsFileServerBaseDir = path.normalize(config.jsFileServerBaseDir);
-    var fullRequestedFilePath = path.join(jsFileServerBaseDir, requestedFile);
+    var fileServerBaseDir = path.normalize(config.fileServerBaseDir);
+    var fullRequestedFilePath = path.join(fileServerBaseDir, requestedFile);
     
     /* alias for serving the debug library */
     if (requestedFile.toLowerCase() == '/aardwolf.js') {
         util.serveStaticFile(res, path.join(__dirname, '../js/aardwolf.js'));
     }
-    /* File must exist and must be located inside the jsFileServerBaseDir */
+    /* File must exist and must be located inside the fileServerBaseDir */
     else if (path.existsSync(fullRequestedFilePath) &&
-             fullRequestedFilePath.indexOf(jsFileServerBaseDir) === 0)
+             fullRequestedFilePath.indexOf(fileServerBaseDir) === 0)
     {
         var rewriter;
         if (requestedFile.substr(-3) == '.js') {
-            rewriter = require('../jsrewriter/jsrewriter.js');
+            rewriter = require('../rewriter/jsrewriter.js');
         }
         else if (requestedFile.substr(-7) == '.coffee') {
-            rewriter = require('../jsrewriter/coffeerewriter.js');
+            rewriter = require('../rewriter/coffeerewriter.js');
         }
         
         if (rewriter) {

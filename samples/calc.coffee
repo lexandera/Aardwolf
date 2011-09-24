@@ -27,11 +27,6 @@ calculate = ->
     
     performMultiplication = (n1, n2) ->
         console.log 'Performing multiplication of '+n1+' and '+n2+'.'
-        
-        # Intended to demonstrate exception reporting in async calls
-        throwException = -> nonExistingObjectForExceptionReportingDemonstration.bar()
-        setTimeout throwException, 1000
-        
         n1 * n2
     
     sum = performAddition a, b

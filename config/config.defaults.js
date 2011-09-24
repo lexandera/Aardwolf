@@ -16,10 +16,10 @@ config.serverHost = '';
 /* port on which the server listens for requests */
 config.serverPort = 8000;
 
-/* Full path to directory holding JS source files you wish to debug */
-config.jsFileServerBaseDir = path.join(__dirname, '../samples');
-/* Port on which JS files will be served */
-config.jsFileServerPort = 8500;
+/* Full path to directory holding source files you wish to debug */
+config.fileServerBaseDir = path.join(__dirname, '../samples');
+/* Port on which files will be served */
+config.fileServerPort = 8500;
 
 
 

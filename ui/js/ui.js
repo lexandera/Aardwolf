@@ -1,5 +1,5 @@
 
-var jsFiles = {};
+var files = {};
 var $codeContainer;
 var $code;
 
@@ -29,11 +29,11 @@ $(function() {
 
 function initDebugger() {
     var fileList = getFromServer('/files/list');
-    jsFiles = {};
+    files = {};
     
     fileList.files.forEach(function(f) {
         var fdata = getFromServer('/files/data/'+f)
-        jsFiles[f] = fdata.data;
+        files[f] = fdata.data;
     });
     
     postToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
@@ -98,7 +98,7 @@ function showBreakpoint(data) {
         'switch', 'return', 'debugger', 'try', 'catch', 'throw', 'true', 'false'
     ];
     
-    tokenize(jsFiles[data.file.substr(1)], function(token, type) {
+    tokenize(files[data.file.substr(1)], function(token, type) {
         var pre = '';
         var post = '';
         

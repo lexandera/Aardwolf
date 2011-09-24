@@ -20,7 +20,7 @@ function serveStaticFile(res, filename) {
             .toString()
             .replace(/__SERVER_HOST__/g, config.serverHost)
             .replace(/__SERVER_PORT__/g, config.serverPort)
-            .replace(/__JS_FILE_SERVER_PORT__/g, config.jsFileServerPort);
+            .replace(/__FILE_SERVER_PORT__/g, config.fileServerPort);
     }
     
     res.writeHead(200, { 'Content-Type': ct });
@@ -28,9 +28,9 @@ function serveStaticFile(res, filename) {
 }
 
 
-function getJSFilesList() {
-    var jsFiles = [];
-    var baseDir = path.normalize(config.jsFileServerBaseDir);
+function getFilesList() {
+    var files = [];
+    var baseDir = path.normalize(config.fileServerBaseDir);
     
     function walk(dir) {
         var fileList = fs.readdirSync(dir);
@@ -39,7 +39,7 @@ function getJSFilesList() {
             var stat = fs.statSync(fullPath);
             if (stat.isFile()) {
                 if (fullPath.substr(-3) == '.js' || fullPath.substr(-7) == '.coffee') {
-                    jsFiles.push(fullPath.substr(baseDir.length +1));
+                    files.push(fullPath.substr(baseDir.length +1));
                 }
             }
             else {
@@ -51,12 +51,12 @@ function getJSFilesList() {
     walk(baseDir);
     
     /* Unixify paths */
-    jsFiles = jsFiles.map(function(f) { return f.replace(/\\/g, '/'); });
+    files = files.map(function(f) { return f.replace(/\\/g, '/'); });
     
-    return jsFiles;
+    return files;
 }
 
 
 module.exports.serveStaticFile = serveStaticFile;
-module.exports.getJSFilesList = getJSFilesList;
+module.exports.getFilesList = getFilesList;
 
