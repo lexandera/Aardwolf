@@ -40,9 +40,10 @@ function AardwolfServer(req, res) {
     function processPostedData(data) {
         switch (req.url) {
             case '/mobile/init':
+                mobileDispatcher.end();
                 mobileDispatcher = new Dispatcher();
-                /*desktopDispatcher = new Dispatcher();*/
                 mobileDispatcher.setClient(res);
+                desktopDispatcher.clearMessages();
                 desktopDispatcher.addMessage(data);
                 break;
                 
@@ -125,6 +126,7 @@ function Dispatcher() {
     var client;
     
     this.setClient = function(c) {
+        this.end();
         client = c;
         process();
     };
@@ -132,6 +134,16 @@ function Dispatcher() {
     this.addMessage = function(m) {
         queue.push(m);
         process();
+    };
+    
+    this.end = function() {
+        if (client) {
+            client.end();
+        }
+    };
+    
+    this.clearMessages = function() {
+        queue = [];
     };
     
     function process() {
