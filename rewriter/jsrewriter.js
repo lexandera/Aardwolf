@@ -53,6 +53,11 @@ function addDebugStatements(filePath, text) {
             {
                 var isDebuggerStatement = token === 'debugger';
                 out.push(buildDebugStatement(filePath, line, isDebuggerStatement));
+                
+                if (isDebuggerStatement) {
+                    /* Comment out the debugger statement to avoid triggering any native debuggers */
+                    token = '/*' + token + '*/';
+                }
             }
             
             semicolonOrFunctionBoundryEncountered = false;

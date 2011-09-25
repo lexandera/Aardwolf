@@ -33,8 +33,15 @@ function addDebugStatements(filePath, text) {
         }
         
         if (parts = line.match(/^(\s*)[^\s]+/)) {
-            var isDebuggerStatement = !!line.match(/^\s*debugger/);
+            var match = line.match(/^(\s*)(debugger.*)$/);
+            var isDebuggerStatement = !!match; 
             out.push((parts[1] || '') + '('+ buildDebugStatement(filePath, lineNum, isDebuggerStatement) +');');
+            
+            if (isDebuggerStatement) {
+                /* Comment out the debugger statement to avoid triggering any native debuggers */
+                line = match[1] + '#' + match[2];
+            }
+            
             out.push(line);
         }
     });
