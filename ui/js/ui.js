@@ -8,7 +8,10 @@ var $stepBtn;
 var $stackTrace;
 
 $(function() {
-    $('#breakpoints').val(JSON.stringify([['/calc.js', 11], ['/calc.js', 25], ['/calc.js', 37]]));
+    $('#breakpoints').val(JSON.stringify([
+        ['/calc.js', 11], ['/calc.js', 25], ['/calc.js', 37],
+        ['/calc.coffee', 11], ['/calc.coffee', 21]
+    ]));
     $('#eval').val("");
     
     $('#btn-update-breakpoints').click(updateBreakpoints);
@@ -17,6 +20,8 @@ $(function() {
     $('#btn-continue').click(breakpointContinue);
     $('#btn-step').click(breakpointStep);
     
+    $('#file-switcher').change(switcherSwitchFile);
+    
     $continueBtn = $('#btn-continue'); 
     $stepBtn = $('#btn-step');
     $stackTrace = $('#stack');
@@ -24,19 +29,31 @@ $(function() {
     $codeContainer = $('#code-container');
     $code = $('#code');
     
+    loadSourceFiles();
     listenToServer();
+    
+    showFile({ file: $('#file-switcher').val() });
+    
+    /*showBreakpoint({ file: '/calc.js', line: 11, stack: [] });*/
 });
 
 function initDebugger() {
+    loadSourceFiles();
+    postToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
+}
+
+function loadSourceFiles() {
     var fileList = getFromServer('/files/list');
     files = {};
     
-    fileList.files.forEach(function(f) {
+    $('#file-switcher option').remove();
+    addToFileSwitcher('', '<select file>');
+    
+    fileList && fileList.files.forEach(function(f) {
         var fdata = getFromServer('/files/data/'+f)
         files[f] = fdata.data;
+        addToFileSwitcher(f, f);
     });
-    
-    postToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
 }
 
 function updateBreakpoints() {
@@ -65,6 +82,14 @@ function breakpointStep() {
     postToServer({ command: 'breakpoint-step' });
 }
 
+function addToFileSwitcher(filePath, fileLabel) {
+    $('<option></option>').val(filePath).text(fileLabel).appendTo($('#file-switcher'));
+}
+
+function switcherSwitchFile() {
+    showFile({ file: $('#file-switcher').val() });
+}
+
 function postToServer(payload) {
     var req = new XMLHttpRequest();
     req.open('POST', '/desktop/outgoing', false);
@@ -76,7 +101,7 @@ function getFromServer(path) {
     var req = new XMLHttpRequest();
     req.open('GET', path, false);
     req.send();
-    return JSON.parse(req.responseText);
+    return safeJSONParse(req.responseText);
 }
 
 function listenToServer() {
@@ -84,7 +109,10 @@ function listenToServer() {
     req.open('GET', '/desktop/incoming', true);
     req.onreadystatechange = function () {
         if (req.readyState == 4) {
-            processOutput(JSON.parse(req.responseText));
+            var data = safeJSONParse(req.responseText);
+            if (data) {
+                processOutput(data);
+            }
             listenToServer();
         }
     };
@@ -92,6 +120,12 @@ function listenToServer() {
 }
 
 function showBreakpoint(data) {
+    showFile(data);
+    $('#file-switcher').val(data.file);
+    $stackTrace.text(data.stack.join('\n'));
+}
+
+function showFile(data) {
     var codeTokens = [];
     var keywordList;
     var literalList;
@@ -108,7 +142,7 @@ function showBreakpoint(data) {
         tokenize = tokenizeJavaScript;
     }
     
-    tokenize(files[data.file.substr(1)], function(token, type) {
+    tokenize(files[data.file] || '', function(token, type) {
         var pre = '';
         var post = '';
         
@@ -135,12 +169,15 @@ function showBreakpoint(data) {
         .split('\n')
         .map(function(x, i) {
             var num = String(i+1);
-            var paddedNum = '      '.substr(num.length) + '<span class="linenum">' + num + ' </span>';
+            var className = 'linenum' + (existsBreakpoint(data.file, num) ? ' breakpoint' : '');
+            var paddedNum = '<span class="'+className+'" file="'+data.file+'" line="'+num+'">' + 
+                            '      '.substr(num.length) + num + ' ' +
+                            '</span>';
             return paddedNum + ' ' + x;
         });
 
     $code.html(codeLines.join('\n'));
-    $stackTrace.text(data.stack.join('\n'));
+    $code.find('.linenum').click(toggleBreakpoint);
     
     var numLines = codeLines.length;
     var textAreaHeight = $codeContainer.height();
@@ -177,6 +214,38 @@ function removeLineHightlight() {
     $code.css({ 'background-image': '' });
 }
 
+    
+function existsBreakpoint(f, l) {
+    var breakpoints = safeJSONParse($('#breakpoints').val()) || [];
+    return breakpoints.filter(function(b) { return b[0] == f && b[1] == l; }).length > 0;
+}
+
+function toggleBreakpoint() {
+    var breakpoints = safeJSONParse($('#breakpoints').val());
+    if (breakpoints === null) {
+        alert('Could not parse the list of breakpoints!');
+        return;
+    }
+    
+    var $marker = $(this);
+    var file = $marker.attr('file');
+    var line = $marker.attr('line');
+    if (existsBreakpoint(file, line)) {
+        $(this).removeClass('breakpoint');
+        
+        breakpoints = breakpoints.filter(function(b) { return !(b[0] == file && b[1] == line); });
+        $('#breakpoints').val(JSON.stringify(breakpoints));
+    }
+    else {
+        $(this).addClass('breakpoint');
+        
+        breakpoints.push([file, line]);
+        $('#breakpoints').val(JSON.stringify(breakpoints));
+    }
+    
+    updateBreakpoints();
+}
+
 function enableContinueAndStep() {
     $continueBtn.attr('disabled', null);
     $stepBtn.attr('disabled', null);
@@ -210,9 +279,15 @@ function processOutput(data) {
             showBreakpoint(data);
             break;
     }
-    
 }
 
+function safeJSONParse(str) {
+    try {
+        return JSON.parse(str);
+    } catch (ex) {
+        return null;
+    }
+}
 
 var lineNum = 0;
 function writeToConsole(msg) {

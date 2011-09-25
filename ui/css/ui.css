@@ -109,8 +109,14 @@ pre {
 
 #code .linenum {
     color: black;
+    cursor: pointer;
 }
 
+#code .linenum.breakpoint {
+    font-weight: bold;
+    color: white;
+    background: red;
+}
 
 #sidebar {
     display: block;

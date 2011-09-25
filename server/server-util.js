@@ -39,7 +39,7 @@ function getFilesList() {
             var stat = fs.statSync(fullPath);
             if (stat.isFile()) {
                 if (fullPath.substr(-3) == '.js' || fullPath.substr(-7) == '.coffee') {
-                    files.push(fullPath.substr(baseDir.length +1));
+                    files.push(fullPath.substr(baseDir.length));
                 }
             }
             else {
