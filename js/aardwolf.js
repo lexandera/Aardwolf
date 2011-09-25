@@ -10,27 +10,32 @@ window.Aardwolf = new (function() {
     var lastLine = '';
     
     function listenToServer() {
-        dropCommandConnection();
-        
-        var req = asyncXHR = new XMLHttpRequest();
-        req.open('GET', serverUrl + '/mobile/incoming', true);
-        req.onreadystatechange = function () {
-            if (req.readyState == 4) {
-                if (req.responseText) {
-                    var cmd = JSON.parse(req.responseText);            
+        try {
+            dropCommandConnection();
+            
+            asyncXHR = new XMLHttpRequest();
+            asyncXHR.open('GET', serverUrl + '/mobile/incoming', true);
+            asyncXHR.onreadystatechange = function () {
+                if (asyncXHR.readyState == 4) {
+                    if (asyncXHR.responseText) {
+                        var cmd = safeJSONParse(asyncXHR.responseText);
+                            
+                        if (cmd && cmd.command == 'eval') {
+                            doEval(function(aardwolfEval) { return eval(aardwolfEval); }, cmd);
+                        }
+                        else {
+                            processCommand(cmd);
+                        }
                         
-                    if (cmd.command == 'eval') {
-                        doEval(function(aardwolfEval) { return eval(aardwolfEval); }, cmd);
+                        setTimeout(listenToServer, 0);
                     }
-                    else {
-                        processCommand(cmd);
-                    }
-                    
-                    setTimeout(listenToServer, 0);
                 }
-            }
-        };
-        req.send(null);
+            };
+            asyncXHR.send(null);
+        } catch (ex) {
+            alert('Aardwolf encountered an error while waiting for command: ' + ex.toString());
+            listenToServer();
+        }
     }
     
     function dropCommandConnection() {
@@ -41,11 +46,16 @@ window.Aardwolf = new (function() {
     }
     
     function sendToServer(path, payload) {
-        var req = new XMLHttpRequest();
-        req.open('POST', serverUrl + '/mobile' + path, false);
-        req.setRequestHeader('Content-Type', 'application/json');
-        req.send(JSON.stringify(payload));
-        return JSON.parse(req.responseText);
+        try {
+            var req = new XMLHttpRequest();
+            req.open('POST', serverUrl + '/mobile' + path, false);
+            req.setRequestHeader('Content-Type', 'application/json');
+            req.send(JSON.stringify(payload));
+            return safeJSONParse(req.responseText);
+        } catch (ex) {
+            alert('Aardwolf encountered an error while sending data: ' + ex.toString());
+            listenToServer();
+        }
     }
     
     function replaceConsole() {
@@ -111,7 +121,15 @@ window.Aardwolf = new (function() {
             callstack.push(fname);
         }
         return callstack;
-    };
+    }
+    
+    function safeJSONParse(str) {
+        try {
+            return JSON.parse(str);
+        } catch (ex) {
+            return null;
+        }
+    }
     
     this.init = function() {
         replaceConsole();
