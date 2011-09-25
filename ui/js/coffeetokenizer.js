@@ -1,19 +1,17 @@
 
-var keywordListJavaScript = [
-    'var', 'function', 'if', 'else', 'while', 'for', 'do', 'in', 'break', 'continue',
-    'switch', 'return', 'debugger', 'try', 'catch', 'throw', 'true', 'false'
+var keywordListCoffeeScript = [
+    'case', 'default', 'function', 'var', 'void', 'with', 'const', 'let', 'enum', 'export', 'import', 
+    'native', '__hasProp', '__extends', '__slice', '__bind', '__indexOf', 'new', 'delete', 'typeof',
+    'in', 'instanceof', 'return', 'throw', 'break', 'continue', 'debugger', 'if', 'else', 'switch',
+    'for', 'while', 'do', 'try', 'catch', 'finally', 'class', 'extends', 'then', 'unless', 'until',
+    'loop', 'of', 'by', 'when', 'and', 'or', 'is', 'isnt', 'not', 'this', 'super'
+]; 
+
+var literalListCoffeScript = [
+    'true', 'false', 'null', 'undefined', 'yes', 'no', 'on', 'off'
 ];
 
-
-var literalListJavaScript = [
-    'true', 'false', 'null', 'undefined'
-];
-
-/* A simple JS tokenizer. We're really only interested in a couple of keywords, parentheses, 
-   brackets and semicolons, so it doesn't need to be complete as long as it correctly handles
-   multi-word tokens such as strings and comments.
-*/
-function tokenizeJavaScript(str, onToken) {
+function tokenizeCoffeeScript(str, onToken) {
     var len = str.length;
     var pos = 0;
     var validRegexPos = false;
@@ -24,11 +22,11 @@ function tokenizeJavaScript(str, onToken) {
         if (c === '"' || c === "'") {
             extractString(c);
         }
-        else if (c === '/' && str[pos+1] === '/') {
-            extractSingleLineComment();
-        }
-        else if (c === '/' && str[pos+1] === '*') {
+        else if (c === '#' && str[pos+1] === '#' && str[pos+2] === '#') {
             extractMultiLineComment();
+        }
+        else if (c === '#') {
+            extractSingleLineComment();
         }
         else if (c === '/' && validRegexPos) {
             extractRegexLiteral();
@@ -70,8 +68,8 @@ function tokenizeJavaScript(str, onToken) {
     
     function extractMultiLineComment() {
         var endPos = pos;
-        while (!(str[++endPos] === '*' && str[endPos+1] === '/'));
-        endPos += 2;
+        while (!(str[++endPos] === '#' && str[endPos+1] === '#' && str[endPos+2] === '#'));
+        endPos += 3;
         onTokenInternal(str.substring(pos, endPos), 'comment');
         pos = endPos;
     }

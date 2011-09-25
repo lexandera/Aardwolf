@@ -66,7 +66,7 @@ The procedure is the same as above, except:
   
     var config = require('../config/config.defaults.js');
     config.serverHost = 'ip-or-hostname-of-your-computer';
-    config.jsFileServerBaseDir = '/path/to/www/root';
+    config.fileServerBaseDir = '/path/to/www/root';
   
   Start or restart the server for changes to take effect.
     

@@ -95,6 +95,10 @@ pre {
     color: blue;
 }
 
+#code .literal {
+    color: purple;
+}
+
 #code .string {
     color: purple;
 }
