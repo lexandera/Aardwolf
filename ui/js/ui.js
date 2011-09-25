@@ -33,8 +33,6 @@ $(function() {
     listenToServer();
     
     showFile({ file: $('#file-switcher').val() });
-    
-    /*showBreakpoint({ file: '/calc.js', line: 11, stack: [] });*/
 });
 
 function initDebugger() {
@@ -58,6 +56,7 @@ function loadSourceFiles() {
 
 function updateBreakpoints() {
     postToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
+    paintBreakpoints($('#file-switcher').val());
 }
 
 function setBreakOnNext() {
@@ -169,8 +168,7 @@ function showFile(data) {
         .split('\n')
         .map(function(x, i) {
             var num = String(i+1);
-            var className = 'linenum' + (existsBreakpoint(data.file, num) ? ' breakpoint' : '');
-            var paddedNum = '<span class="'+className+'" file="'+data.file+'" line="'+num+'">' + 
+            var paddedNum = '<span class="linenum" file="'+data.file+'" line="'+num+'">' + 
                             '      '.substr(num.length) + num + ' ' +
                             '</span>';
             return paddedNum + ' ' + x;
@@ -178,6 +176,7 @@ function showFile(data) {
 
     $code.html(codeLines.join('\n'));
     $code.find('.linenum').click(toggleBreakpoint);
+    paintBreakpoints(data.file);
     
     var numLines = codeLines.length;
     var textAreaHeight = $codeContainer.height();
@@ -214,6 +213,16 @@ function removeLineHightlight() {
     $code.css({ 'background-image': '' });
 }
 
+function paintBreakpoints(file) {
+    $code.find('.linenum').each(function(i, elem) {
+        if (existsBreakpoint(file, i+1)) {
+            $(elem).addClass('breakpoint');
+        }
+        else {
+            $(elem).removeClass('breakpoint');
+        }
+    });
+}
     
 function existsBreakpoint(f, l) {
     var breakpoints = safeJSONParse($('#breakpoints').val()) || [];
