@@ -93,12 +93,20 @@ function listenToServer() {
 
 function showBreakpoint(data) {
     var codeTokens = [];
-    var keywordList = [
-        'var', 'function', 'if', 'else', 'while', 'for', 'do', 'in', 'break', 'continue',
-        'switch', 'return', 'debugger', 'try', 'catch', 'throw', 'true', 'false'
-    ];
+    var keywordList;
+    var literalList;
+    var tokenize;
     
-    var tokenize = data.file.substr(-7) == '.coffee' ? tokenize_coffeescript : tokenize_js;
+    if (data.file.substr(-7) == '.coffee') {
+        keywordList = keywordListCoffeeScript;
+        literalList = literalListCoffeScript;
+        tokenize = tokenizeCoffeeScript;
+    }
+    else {
+        keywordList = keywordListJavaScript;
+        literalList = literalListJavaScript;
+        tokenize = tokenizeJavaScript;
+    }
     
     tokenize(files[data.file.substr(1)], function(token, type) {
         var pre = '';
@@ -106,6 +114,10 @@ function showBreakpoint(data) {
         
         if (type === 'word' && keywordList.indexOf(token) > -1) {
             pre = '<span class="keyword">';
+            post = '</span>';
+        }
+        else if (type === 'word' && literalList.indexOf(token) > -1) {
+            pre = '<span class="literal">';
             post = '</span>';
         }
         else if (['string', 'comment', 'number'].indexOf(type) > -1) {

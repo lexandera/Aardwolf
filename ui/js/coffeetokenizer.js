@@ -1,9 +1,17 @@
 
-/* A simple JS tokenizer. We're really only interested in a couple of keywords, parentheses, 
-   brackets and semicolons, so it doesn't need to be complete as long as it correctly handles
-   multi-word tokens such as strings and comments.
-*/
-function tokenize_coffeescript(str, onToken) {
+var keywordListCoffeeScript = [
+    'case', 'default', 'function', 'var', 'void', 'with', 'const', 'let', 'enum', 'export', 'import', 
+    'native', '__hasProp', '__extends', '__slice', '__bind', '__indexOf', 'new', 'delete', 'typeof',
+    'in', 'instanceof', 'return', 'throw', 'break', 'continue', 'debugger', 'if', 'else', 'switch',
+    'for', 'while', 'do', 'try', 'catch', 'finally', 'class', 'extends', 'then', 'unless', 'until',
+    'loop', 'of', 'by', 'when', 'and', 'or', 'is', 'isnt', 'not', 'this', 'super'
+]; 
+
+var literalListCoffeScript = [
+    'true', 'false', 'null', 'undefined', 'yes', 'no', 'on', 'off'
+];
+
+function tokenizeCoffeeScript(str, onToken) {
     var len = str.length;
     var pos = 0;
     var validRegexPos = false;

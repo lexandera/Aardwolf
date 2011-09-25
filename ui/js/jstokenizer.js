@@ -1,9 +1,19 @@
 
+var keywordListJavaScript = [
+    'var', 'function', 'if', 'else', 'while', 'for', 'do', 'in', 'break', 'continue',
+    'switch', 'return', 'debugger', 'try', 'catch', 'throw', 'true', 'false'
+];
+
+
+var literalListJavaScript = [
+    'true', 'false', 'null', 'undefined'
+];
+
 /* A simple JS tokenizer. We're really only interested in a couple of keywords, parentheses, 
    brackets and semicolons, so it doesn't need to be complete as long as it correctly handles
    multi-word tokens such as strings and comments.
 */
-function tokenize_js(str, onToken) {
+function tokenizeJavaScript(str, onToken) {
     var len = str.length;
     var pos = 0;
     var validRegexPos = false;
