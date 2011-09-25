@@ -57,6 +57,21 @@ accessed from your phone. This is where your phone will load the samples from, s
 You will get best results by connecting both you computer and your phone to the same WiFi network.
 
 
+CoffeeScript support
+----------------------------------------------------------------------------------------------------
+
+Aardwolf now also contains extrememly basic CoffeeScript support. It probably can't handle any serious
+real-world code, but it's a good starting point if someone wishes to fork the source and work on it.
+
+The steps for debugging the CoffeeScript example are the same as the steps described above, except:
+
+- Begin by installing CoffeeScript support:
+
+    npm -g install coffee-script
+
+- Replace calc.html with calc-coffee.html in the final step.
+
+
 Debugging your own code
 ----------------------------------------------------------------------------------------------------
 
