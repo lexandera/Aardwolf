@@ -209,6 +209,21 @@ button::-moz-focus-inner
     content: "\279C";
 }
 
+.step-over:before
+{
+    content: "\21B7";
+}
+
+.step-in:before
+{
+    content: "\21B4";
+}
+
+.step-out:before
+{
+    content: "\21B1";
+}
+
 .star:before
 {
     content: "\2605";

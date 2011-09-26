@@ -4,7 +4,7 @@ window.Aardwolf = new (function() {
     var serverPort = '__SERVER_PORT__';
     var serverUrl = 'http://' + serverHost + ':' + serverPort;
     var breakpoints = {};
-    var breakOnNext = false;
+    var shouldBreak = function() { return false; };
     var asyncXHR = null;
     var lastFile = '';
     var lastLine = '';
@@ -70,7 +70,11 @@ window.Aardwolf = new (function() {
                 var args = Array.prototype.slice.call(arguments);
                 /* write to local console before writing to the potentially slow remote console */
                 oldFunc && oldFunc.apply(window.console, args);
-                sendToServer('/console', { command: 'print-message', type: f.toUpperCase(), message: args.toString() });
+                sendToServer('/console', { 
+                    command: 'print-message',
+                    type: f.toUpperCase(),
+                    message: args.toString()
+                });
             };
         });
     }
@@ -89,16 +93,30 @@ window.Aardwolf = new (function() {
                 });
                 return true;
             
-            case 'break-on-next':
-                breakOnNext = true;
-                return true;
-            
             case 'breakpoint-continue':
-                breakOnNext = false;
+                shouldBreak = function() { return false; };
                 return false;
             
+            case 'break-on-next':
             case 'breakpoint-step':
-                breakOnNext = true;
+            case 'breakpoint-step-in':
+                shouldBreak = function() { return true; };
+                return false;
+                
+            case 'breakpoint-step-out':
+                shouldBreak = (function(oldDepth) {
+                    return function(depth) {
+                        return depth < oldDepth;
+                    };
+                })(stackDepth);
+                return false;
+                
+            case 'breakpoint-step-over':
+                shouldBreak = (function(oldDepth) {
+                    return function(depth) {
+                        return depth <= oldDepth;
+                    };
+                })(stackDepth);
                 return false;
         }
     }
@@ -110,7 +128,11 @@ window.Aardwolf = new (function() {
         } catch (ex) {
             evalResult = 'ERROR: ' + ex.toString();
         }  
-        sendToServer('/console', { command: 'print-eval-result', input: cmd.data, result: evalResult });
+        sendToServer('/console', {
+            command: 'print-eval-result',
+            input: cmd.data,
+            result: evalResult
+        });
     }
     
     function getStack() {
@@ -133,7 +155,9 @@ window.Aardwolf = new (function() {
     
     this.init = function() {
         replaceConsole();
-        var cmd = sendToServer('/init', { command: 'mobile-connected'});
+        var cmd = sendToServer('/init', {
+            command: 'mobile-connected'
+        });
         if (cmd) {
             processCommand(cmd)
         }
@@ -147,13 +171,21 @@ window.Aardwolf = new (function() {
         lastLine = line;
         
         while (true) {
-            var shouldBreak = (breakpoints[file] && breakpoints[file][line]) || isDebuggerStatement || breakOnNext;
-            if (!shouldBreak) {
+            var isBreakpoint = (breakpoints[file] && breakpoints[file][line]) ||
+                               isDebuggerStatement || 
+                               shouldBreak(stackDepth);
+            
+            if (!isBreakpoint) {
                 return;
             }
             
             dropCommandConnection();
-            var cmd = sendToServer('/breakpoint', { command: 'report-breakpoint', file: file, line: line, stack: getStack().slice(1) });
+            var cmd = sendToServer('/breakpoint', {
+                command: 'report-breakpoint',
+                file: file,
+                line: line,
+                stack: getStack().slice(1)
+            });
             listenToServer();
             if (!cmd) {
                 return;
@@ -172,8 +204,27 @@ window.Aardwolf = new (function() {
     };
     
     this.reportException = function(e) {
-        sendToServer('/console', { command: 'report-exception', message: e.toString(), file: lastFile, line: lastLine, stack: getStack().slice(1) });
+        sendToServer('/console', {
+            command: 'report-exception',
+            message: e.toString(),
+            file: lastFile,
+            line: lastLine,
+            stack: getStack().slice(1)
+        });
     }
+    
+    var stack = [];
+    var stackDepth = 0;
+    
+    this.pushStack = function(functionName, file, line) {
+        stack.push([functionName, file, line]);
+        ++stackDepth;
+    };
+    
+    this.popStack = function() {
+        var f = stack.pop();
+        --stackDepth;
+    };
     
 })();
 

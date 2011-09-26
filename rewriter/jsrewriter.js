@@ -12,6 +12,13 @@ var exceptionInterceptorParts = exceptionInterceptorTemplate.split('SPLIT');
 var exceptionInterceptorStart = exceptionInterceptorParts[0].trim();
 var exceptionInterceptorEnd = exceptionInterceptorParts[1].trim();
 
+function buildExceptionInterceptorStart(functionName, file, line) {
+    return exceptionInterceptorStart
+                .replace('__FUNCTION__', functionName)
+                .replace('__FILE__', file)
+                .replace('__LINE__', line);
+}
+
 function buildDebugStatement(file, line, isDebuggerStatement) {
     return debugStatementTemplate
                 .replace('__FILE__', file)
@@ -25,6 +32,8 @@ function addDebugStatements(filePath, text) {
     var line = 1;
     var semicolonOrFunctionBoundryEncountered = true;
     var newlineEncountered = true;
+    var functionEncountered = false;
+    var wordAfterFunction = null;
     
     jstok.tokenize(text, function(token, type) {
         /* drop carriage returns... we don't need them. */
@@ -64,10 +73,20 @@ function addDebugStatements(filePath, text) {
             newlineEncountered = false;
         }
         
+        if (type == 'word') {
+            if (functionEncountered) {
+                wordAfterFunction = token;
+            }
+            functionEncountered = false;
+        }
+        
         if (token === 'function') {
             /* keep a separate nesting depth counter for each nested function */
             nestingDepth.push(0);
             out.push(token);
+            
+            functionEncountered = true;
+            wordAfterFunction = null;
         }
         else if (token === '{') {
             ++nestingDepth[nestingDepth.length-1];
@@ -76,7 +95,7 @@ function addDebugStatements(filePath, text) {
             
             /* we have just entered a function body - insert the first part of the exception interception block */
             if (nestingDepth.length > 1 && nestingDepth[nestingDepth.length-1] === 1) {
-                out.push(exceptionInterceptorStart);
+                out.push(buildExceptionInterceptorStart(wordAfterFunction || '<anonymous>', filePath, line));
                 semicolonOrFunctionBoundryEncountered = true;
             }
         }

@@ -5,6 +5,9 @@ var $code;
 
 var $continueBtn;
 var $stepBtn;
+var $stepOverBtn;
+var $stepInBtn;
+var $stepOutBtn;
 var $stackTrace;
 
 $(function() {
@@ -19,13 +22,17 @@ $(function() {
     $('#btn-eval').click(evalCodeRemotely);
     $('#btn-continue').click(breakpointContinue);
     $('#btn-step').click(breakpointStep);
-    
+    $('#btn-step-over').click(breakpointStepOver);
+    $('#btn-step-in').click(breakpointStepIn);
+    $('#btn-step-out').click(breakpointStepOut);
     $('#file-switcher').change(switcherSwitchFile);
     
     $continueBtn = $('#btn-continue'); 
     $stepBtn = $('#btn-step');
+    $stepOverBtn = $('#btn-step-over');
+    $stepInBtn = $('#btn-step-in');
+    $stepOutBtn = $('#btn-step-out');
     $stackTrace = $('#stack');
-    
     $codeContainer = $('#code-container');
     $code = $('#code');
     
@@ -74,11 +81,27 @@ function breakpointContinue() {
     postToServer({ command: 'breakpoint-continue' });
 }
 
-function breakpointStep() {
+function breakpointStepCommand(command) {
     removeLineHightlight();
     disableContinueAndStep();
     clearStackTrace();
-    postToServer({ command: 'breakpoint-step' });
+    postToServer({ command: command });
+}
+
+function breakpointStep(command) {
+    breakpointStepCommand('breakpoint-step');
+}
+
+function breakpointStepOver() {
+    breakpointStepCommand('breakpoint-step-over');
+}
+
+function breakpointStepIn() {
+    breakpointStepCommand('breakpoint-step-in');
+}
+
+function breakpointStepOut() {
+    breakpointStepCommand('breakpoint-step-out');
 }
 
 function addToFileSwitcher(filePath, fileLabel) {
@@ -130,15 +153,21 @@ function showFile(data) {
     var literalList;
     var tokenize;
     
-    if (data.file.substr(-7) == '.coffee') {
+    if (fileExt(data.file) == 'coffee') {
         keywordList = keywordListCoffeeScript;
         literalList = literalListCoffeScript;
         tokenize = tokenizeCoffeeScript;
+        
+        $('#controls-coffeescript').show();
+        $('#controls-javascript').hide();
     }
     else {
         keywordList = keywordListJavaScript;
         literalList = literalListJavaScript;
         tokenize = tokenizeJavaScript;
+        
+        $('#controls-coffeescript').hide();
+        $('#controls-javascript').show();
     }
     
     tokenize(files[data.file] || '', function(token, type) {
@@ -258,11 +287,17 @@ function toggleBreakpoint() {
 function enableContinueAndStep() {
     $continueBtn.attr('disabled', null);
     $stepBtn.attr('disabled', null);
+    $stepOverBtn.attr('disabled', null);
+    $stepInBtn.attr('disabled', null);
+    $stepOutBtn.attr('disabled', null);
 }
 
 function disableContinueAndStep() {
     $continueBtn.attr('disabled', true);
     $stepBtn.attr('disabled', true);
+    $stepOverBtn.attr('disabled', true);
+    $stepInBtn.attr('disabled', true);
+    $stepOutBtn.attr('disabled', true);
 }
 
 function clearStackTrace() {
@@ -303,5 +338,9 @@ function writeToConsole(msg) {
     $('<div></div>').html((++lineNum) + ': ' + msg).appendTo($('#output'))[0].scrollIntoView();
 }
 
+
+function fileExt(fileName) {
+    return fileName.split('.').slice(-1)[0];
+}
 
 
