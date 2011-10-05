@@ -36,12 +36,9 @@ Setting it up
     using Mercurial: hg clone https://bitbucket.org/lexandera/aardwolf
     using Git: git clone git://github.com/lexandera/Aardwolf.git
 
-- Create the file config/config.local.js and paste into it the following lines:
-  
-    var config = require('../config/config.defaults.js');
-    config.serverHost = 'ip-or-hostname-of-your-computer';
+- Download the required libraries by running "npm link" in the checked-out directory
 
-- Start the server by running "node app.js"
+- Start the server by running "node app.js -h <ip-or-hostname-of-your-computer>"
 
 - After the server starts up, open http://localhost:8000 in your desktop browser. The debugger UI should appear.
 
@@ -65,11 +62,7 @@ real-world code, but it's a good starting point if someone wishes to fork the so
 
 The steps for debugging the CoffeeScript example are the same as the steps described above, except:
 
-- Begin by installing CoffeeScript support:
-
-    npm -g install coffee-script
-
-- Replace calc.html with calc-coffee.html in the final step.
+- Replace calc.html with calc-coffee.html in the final step when opening the example.
 
 
 Debugging your own code
@@ -77,13 +70,9 @@ Debugging your own code
 
 The procedure is the same as above, except:
 
-- Put the following in your config/config.local.js file:
+- When starting the server, add an additional parameter called -d or --file-dir, like this:
   
-    var config = require('../config/config.defaults.js');
-    config.serverHost = 'ip-or-hostname-of-your-computer';
-    config.fileServerBaseDir = '/path/to/www/root';
-  
-  Start or restart the server for changes to take effect.
+    "node app.js -h <ip-or-hostname-of-your-computer> -d '/path/to/www/root'"
     
 - In your HTML page include the aardwolf.js debug library as the very first JS file and change the
   paths of included files to point to the files modified by Aardwolf:
