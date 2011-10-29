@@ -67,9 +67,9 @@ The procedure is the same as above, except:
     `node app.js -h <ip-or-hostname-of-your-computer> -d </path/to/www/root>`
 * In your HTML page include the aardwolf.js debug library as the very first JS file and change the paths of included files to point to the files modified by Aardwolf:
     <pre>
-    &lt;script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/aardwolf.js"&gt;&lt;/script&gt;
-    &lt;script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/some-script.js"&gt;&lt;/script&gt;
-    &lt;script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/some-other-script.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/aardwolf.js"&gt; &lt;/script&gt;
+    &lt;script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/some-script.js"&gt; &lt;/script&gt;
+    &lt;script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/some-other-script.js"&gt; &lt;/script&gt;
     </pre>
 * Reload the debugger UI first, then reload the page you just modified. The line "Mobile device connected." should appear in the UI's output pane.
 * You should now be able to evaluate code remotely, set breakpoints, etc.
