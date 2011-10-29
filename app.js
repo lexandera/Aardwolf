@@ -13,6 +13,10 @@ if (argv['file-dir'])  { config.fileServerBaseDir = argv['file-dir']; }
 
 if (argv['file-port']) { config.fileServerPort    = argv['file-port']; }
 
+if (!config.serverHost) {
+    console.error("Please specify hostname.");
+    return;
+}
 
 var server = require('./server/server.js');
 var debugFileServer = require('./server/debug-file-server.js');
