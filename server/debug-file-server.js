@@ -32,6 +32,7 @@ function DebugFileServer(req, res) {
     }
     /* File must exist and must be located inside the fileServerBaseDir */
     else if (path.existsSync(fullRequestedFilePath) &&
+             fs.statSync(fullRequestedFilePath).isFile() &&
              fullRequestedFilePath.indexOf(fileServerBaseDir) === 0)
     {
         var rewriter;
