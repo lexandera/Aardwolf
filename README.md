@@ -1,0 +1,77 @@
+Aardwolf
+========
+
+Aardwolf is a remote JavaScript debugger for Android / iOS / Windows Phone 7 / BlackBerry OS 6+ and is written in JavaScript. It's available under the MIT license.
+
+Home page: http://lexandera.com/aardwolf/
+
+Currently it supports:
+
+* breakpoints
+* code evaluation at breakpoint
+* break on next
+* step/continue execution control
+* stack listing
+* exception reporting (also for exceptions thrown in async calls)
+* JavaScript console remoting
+
+
+It consists of the following parts:
+
+* a server for communication between the mobile device and the UI
+* a code rewriter which injects debug info into your existing source code
+* a debug library which can break execution of your scripts, report execution progress, evaluate code, etc.
+* a UI for setting breakpoints, stepping through code and seeing the current position within the script
+
+
+In order to run the examples you will need:
+
+* Node.js. Get it here: http://nodejs.org/#download
+* An Android 2.x/iOS/WindowsPhone7 device or emulator (although running them from a Firefox/Chrome/Safari window will also work)
+
+
+Setting it up
+----------------------------------------------------------------------------------------------------
+
+* Begin by installing node.js and Git
+* Get the Aardwolf source code from GitHub: 
+`git clone git://github.com/lexandera/Aardwolf.git`
+* Download the required libraries by running "npm link" in the checked-out directory
+* Start the server by running "node app.js -h <ip-or-hostname-of-your-computer>"
+* After the server starts up, open http://localhost:8000 in your desktop browser. The debugger UI should appear.
+* Open http://ip-or-hostname-of-your-computer:8500/calc.html on your phone and wait for the page to load. The line "Mobile device connected." should appear in the UI's output pane.
+* You're now debugging the "calculator" example script.
+
+
+If you're having problems opening the example, make sure that access to the port 8500 on your computer is not blocked by a firewall and that the address you entered into the config file can really be accessed from your phone. This is where your phone will load the samples from, so it must work.
+
+You will get best results by connecting both you computer and your phone to the same WiFi network.
+
+
+CoffeeScript support
+----------------------------------------------------------------------------------------------------
+
+Aardwolf now also contains extrememly basic CoffeeScript support. It probably can't handle any serious real-world code, but it's a good starting point if someone wishes to fork the source and work on it.
+
+The steps for debugging the CoffeeScript example are the same as the steps described above, except:
+
+* Replace calc.html with calc-coffee.html in the final step when opening the example.
+
+
+Debugging your own code
+----------------------------------------------------------------------------------------------------
+
+The procedure is the same as above, except:
+
+* When starting the server, add an additional parameter called -d or --file-dir, like this:  
+    `node app.js -h <ip-or-hostname-of-your-computer> -d </path/to/www/root>`
+* In your HTML page include the aardwolf.js debug library as the very first JS file and change the paths of included files to point to the files modified by Aardwolf:
+    <pre>
+    &lt;script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/aardwolf.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/some-script.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="http://ip-or-hostname-of-your-computer:8500/some-other-script.js"&gt;&lt;/script&gt;
+    </pre>
+* Reload the debugger UI first, then reload the page you just modified. The line "Mobile device connected." should appear in the UI's output pane.
+* You should now be able to evaluate code remotely, set breakpoints, etc.
+
+
