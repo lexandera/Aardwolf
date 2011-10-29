@@ -22,6 +22,10 @@ try {
     process.exit(1);
 }
 
+if (!config.serverHost) {
+    console.error("Please specify a valid hostname or IP for your computer using the \"-h\" command-line parameter.");
+    return;
+}
 
 var server = require('./server/server.js');
 var debugFileServer = require('./server/debug-file-server.js');
