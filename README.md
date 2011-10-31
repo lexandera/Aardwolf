@@ -75,3 +75,24 @@ The procedure is the same as above, except:
 * You should now be able to evaluate code remotely, set breakpoints, etc.
 
 
+Debugging processed or minified code
+----------------------------------------------------------------------------------------------------
+
+If you wish to debug code which gets concatenated into a single file, minified, or transformed in some other way, you can still use Aardwolf, but you'll need to make a minor change in the part of your application which reads the code before it gets transformed.
+
+It is important that Aardwolf can access source files before they are processed. Therefore you will need to set it up just as described in the previous section, with the '-d' parameter pointing to the directory containing unprocessed files, then change the processing code in you application so it reads files served by Aardwolf instead of reading them straight from the filesystem.
+
+For example, if your code looks something like this:
+
+    jscode += readFile('some-script.js');
+    jscode += readFile('some-other-script.js');
+
+you would need to change it to something like this:
+    
+    jscode += readFile('http://aardwolf-host:8500/aardwolf.js'); // Don't forget to include this!
+    jscode += readFile('http://aardwolf-host:8500/some-script.js');
+    jscode += readFile('http://aardwolf-host:8500/some-other-script.js');
+
+In most languages, making the modification should be pretty straightforward. PHP's `file_get_contents($url)` and Clojure's `(slurp url)` will handle the change from local paths to URLs transparently. In Scala you can use `io.Source.fromURL(url).mkString`, Ruby has the 'OpenURI' module and in NodeJS you should be able to read remote files using the 'request' module.
+
+Now you should be ready to debug processed code. And since Aardwolf has access to the original files, its UI will display the original, unprocessed code for easier debugging.
