@@ -96,3 +96,24 @@ you would need to change it to something like this:
 In most languages, making the modification should be pretty straightforward. PHP's `file_get_contents($url)` and Clojure's `(slurp url)` will handle the change from local paths to URLs transparently. In Scala you can use `io.Source.fromURL(url).mkString`, Ruby has the 'OpenURI' module and in NodeJS you should be able to read remote files using the 'request' module.
 
 Now you should be ready to debug processed code. And since Aardwolf has access to the original files, its UI will display the original, unprocessed code for easier debugging.
+
+
+How it works
+----------------------------------------------------------------------------------------------------
+
+Breaking code execution and evaluating code at that point is enabled by code rewriting. Aardwolf's server contains a rather simple code rewriter which inserts debug hooks in front of every statement in the source code. These debug statements look like this:
+
+    Aardwolf.updatePosition(  
+        "/calc.js", // File path  
+        7,          // Line number  
+        false,      // Is current line a "debugger;" statement?  
+        function(aardwolfEval) {       // This closure captures the current scope and makes it  
+            return eval(aardwolfEval); // possible to pass it into another function.  
+        }  
+    );  
+
+The first two parameters – file path and line number – should be self explanatory. Every time `Aardwolf.updatePosition()` is called, the given file and line number are checked against a list of breakpoints, and if a match is found, script execution is halted by performing a synchronous XMLHttpRequest to the server.
+
+The third parameter signals whether the current line contains a `debugger;` statement. If it does, we must break execution even if there is no breakpoint set on that line.
+
+Finally, the last parameter is a closure which captures the scope it's defined in and allows us to pass it around. When a string is passed to this function for evaluation, it will be eval'd in the same scope where this closure was defined, thus enabling us to evaluate code at the point where script execution was halted.
