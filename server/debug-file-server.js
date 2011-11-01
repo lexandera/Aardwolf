@@ -1,3 +1,8 @@
+'use strict';
+
+/*
+ * Serves source files with debug statements inserted.
+ */
 
 var http = require('http');
 var path = require('path');
@@ -14,7 +19,6 @@ function run() {
         process.exit(1);
     }
     
-    /* Serves files with debug statements inserted */
     http.createServer(DebugFileServer).listen(config.fileServerPort, null, function() {
         console.log('File server listening for requests on port ' + config.fileServerPort + '.');
     });

@@ -1,3 +1,4 @@
+'use strict';
 
 var keywordListJavaScript = [
     'var', 'function', 'if', 'else', 'while', 'for', 'do', 'in', 'break', 'continue',

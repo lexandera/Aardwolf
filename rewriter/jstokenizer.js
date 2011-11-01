@@ -1,3 +1,4 @@
+'use strict';
 
 /* A simple JS tokenizer. We're really only interested in a couple of keywords, parentheses, 
    brackets and semicolons, so it doesn't need to be complete as long as it correctly handles

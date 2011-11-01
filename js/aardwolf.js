@@ -1,4 +1,9 @@
-
+/* 
+ * Aardwold mobile runtime library.
+ *
+ * Do not enable JS strict mode for this file as it 
+ * will disable some functionality this library depends on.
+ */
 window.Aardwolf = new (function() {
     var serverHost = '__SERVER_HOST__';
     var serverPort = '__SERVER_PORT__';
@@ -68,7 +73,9 @@ window.Aardwolf = new (function() {
             
             window.console[f] = function() {
                 var args = Array.prototype.slice.call(arguments);
-                /* write to local console before writing to the potentially slow remote console */
+                /* Write to local console before writing to the potentially slow remote console.
+                   Make sure that the original function actually exists, otherwise this will
+                   case an error on WindowsPhone where the console object is not available. */
                 oldFunc && oldFunc.apply(window.console, args);
                 sendToServer('/console', { 
                     command: 'print-message',
@@ -171,9 +178,9 @@ window.Aardwolf = new (function() {
         lastLine = line;
         
         while (true) {
-            var isBreakpoint = (breakpoints[file] && breakpoints[file][line]) ||
-                               isDebuggerStatement || 
-                               shouldBreak(stackDepth);
+            var isBreakpoint = (breakpoints[file] && breakpoints[file][line]) || /* explicit breakpoint? */
+                               isDebuggerStatement ||                            /* debugger; statement? */
+                               shouldBreak(stackDepth);                          /* step (in|over|out) or break-on-next? */
             
             if (!isBreakpoint) {
                 return;

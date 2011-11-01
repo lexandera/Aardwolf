@@ -1,3 +1,4 @@
+'use strict';
 
 var fs = require('fs');
 var path = require('path');
@@ -5,7 +6,7 @@ var path = require('path');
 var debugStatementTemplate = 
     fs.readFileSync(path.join(__dirname, 'templates/debug-template.coffee')).toString().trim();
 var exceptionInterceptorTemplate = 
-    fs.readFileSync(path.join(__dirname, 'templates/exception-template.coffee')).toString().replace(/\n\r?/g, '').replace(/    /g, ' ');
+    fs.readFileSync(path.join(__dirname, 'templates/exception-template.coffee')).toString().replace(/\n\r?/g, '').replace(/ {4}/g, ' ');
 
 var exceptionInterceptorParts = exceptionInterceptorTemplate.split('SPLIT');
 var exceptionInterceptorStart = exceptionInterceptorParts[0].trim();

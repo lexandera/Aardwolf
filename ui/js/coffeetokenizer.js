@@ -1,3 +1,4 @@
+'use strict';
 
 var keywordListCoffeeScript = [
     'case', 'default', 'function', 'var', 'void', 'with', 'const', 'let', 'enum', 'export', 'import', 

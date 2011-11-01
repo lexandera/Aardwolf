@@ -1,3 +1,4 @@
+'use strict';
 
 var fs = require('fs');
 var path = require('path');
@@ -6,7 +7,7 @@ var jstok = require('./jstokenizer.js');
 var debugStatementTemplate = 
     fs.readFileSync(path.join(__dirname, 'templates/debug-template.js')).toString().trim();
 var exceptionInterceptorTemplate = 
-    fs.readFileSync(path.join(__dirname, 'templates/exception-template.js')).toString().replace(/\n\r?/g, '').replace(/    /g, ' ');
+    fs.readFileSync(path.join(__dirname, 'templates/exception-template.js')).toString().replace(/\n\r?/g, '').replace(/ {4}/g, ' ');
 
 var exceptionInterceptorParts = exceptionInterceptorTemplate.split('SPLIT');
 var exceptionInterceptorStart = exceptionInterceptorParts[0].trim();
@@ -128,7 +129,7 @@ function addDebugStatements(filePath, text) {
         }
     });
 
-    return exceptionInterceptorStart + 
+    return buildExceptionInterceptorStart('<toplevel>', filePath, 0) + 
            out.join('') + 
            exceptionInterceptorEnd;
 }

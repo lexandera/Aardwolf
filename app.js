@@ -1,3 +1,4 @@
+'use strict';
 
 var argv = require('optimist').argv;
 var fs = require('fs');
@@ -18,13 +19,13 @@ try {
     /* Makes sure the path exists and gets rid of any trailing slashes. */
     config.fileServerBaseDir = fs.realpathSync(config.fileServerBaseDir);
 } catch (e) {
-    console.log(e.message);
+    console.error(e.message);
     process.exit(1);
 }
 
 if (!config.serverHost) {
     console.error("Please specify a valid hostname or IP for your computer using the \"-h\" command-line parameter.");
-    return;
+    process.exit(1);
 }
 
 var server = require('./server/server.js');

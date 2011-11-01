@@ -1,3 +1,9 @@
+'use strict';
+
+/*
+ * Server for communication between the UI and the mobile library.
+ * Also serves UI-related files.
+ */
 
 var http = require('http');
 var path = require('path');

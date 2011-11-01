@@ -1,3 +1,5 @@
+'use strict';
+
 /* 
  * 
  * To change defaults set in this file create a file called config.local.js 

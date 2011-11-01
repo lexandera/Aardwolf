@@ -1,3 +1,4 @@
+'use strict';
 
 var files = {};
 var $codeContainer;
@@ -55,7 +56,7 @@ function loadSourceFiles() {
     addToFileSwitcher('', '<select file>');
     
     fileList && fileList.files.forEach(function(f) {
-        var fdata = getFromServer('/files/data/'+f)
+        var fdata = getFromServer('/files/data/'+f);
         files[f] = fdata.data;
         addToFileSwitcher(f, f);
     });
