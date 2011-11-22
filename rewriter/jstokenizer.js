@@ -43,7 +43,7 @@ function tokenize(str, onToken) {
            opening paren can be a regex literal delimiter. */
         if (type === 'char' && ':=;({'.indexOf(token) > -1) {
             validRegexPos = true;
-        } else {
+        } else if (!((['comment', 'whitespace']).indexOf(type) > -1)) {
             validRegexPos = false;
         }
         
