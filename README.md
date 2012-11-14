@@ -37,7 +37,7 @@ Setting it up
 * Get the Aardwolf source code from GitHub: 
 `git clone git://github.com/lexandera/Aardwolf.git`
 * Download the required libraries by running "npm link" in the checked-out directory
-* Start the server by running "node app.js -h <ip-or-hostname-of-your-computer>"
+* Start the server by running "node app.js -h &lt;ip-or-hostname-of-your-computer&gt;"
 * After the server starts up, open http://localhost:8000 in your desktop browser. The debugger UI should appear.
 * Open http://ip-or-hostname-of-your-computer:8500/calc.html on your phone and wait for the page to load. The line "Mobile device connected." should appear in the UI's output pane.
 * You're now debugging the "calculator" example script.
