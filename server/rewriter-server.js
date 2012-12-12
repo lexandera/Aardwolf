@@ -65,7 +65,6 @@ function processFile(fileName, writeCache) {
 			destFilePath = path.join(destBaseDir, fileName),
 			fileStat = fs.statSync(origFilePath);
 
-		log('Processing ' + fileName + '... ');
 
 		if (fileStat.isDirectory()) {
 			try {
@@ -76,6 +75,8 @@ function processFile(fileName, writeCache) {
 			return;
 		}
 
+		log('Processing ' + fileName + '... ');
+
 		if (fileCache[fileName] && (fileStat.mtime.getTime() == fileCache[fileName]) &&
 			fs.existsSync(destFilePath)) {
 			log('Skipping\n');
@@ -83,7 +84,15 @@ function processFile(fileName, writeCache) {
 			return;
 		}
 
-		if (fileName.substr(-3) === '.js' || fileName === config.indexFile) {
+		var mustDebug = true;
+		for (var i = 0; i < config.includeWithoutDebug.length; i++) {
+			if (fileName.indexOf(config.includeWithoutDebug[i]) >= 0) {
+				mustDebug = false;
+				break;
+			}
+		}
+
+		if ((mustDebug && fileName.substr(-3) === '.js') || fileName === config.indexFile) {
 			var content = fs.readFileSync(origFilePath).toString();
 			if (fileName === config.indexFile) {
 				// Inject aardwolf script in index

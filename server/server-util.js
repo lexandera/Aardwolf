@@ -30,10 +30,10 @@ function serveStaticFile(res, filename) {
 
 
 function getFilesList() {
-	return getAllFiles(['.js', '.coffee'], true);
+	return getAllFiles(['.js', '.coffee']);
 }
 
-function getAllFiles(extensions, ignoreFolders) {
+function getAllFiles(extensions) {
 	var files = [];
     var baseDir = path.normalize(config.fileServerBaseDir);
 
@@ -42,10 +42,20 @@ function getAllFiles(extensions, ignoreFolders) {
         fileList.forEach(function(f) {
             var fullPath = path.join(dir, f);
             var stat = fs.statSync(fullPath);
+			var listForDebug = !!extensions && extensions.length > 0;
 			var include = false;
 			var extension;
+
+			if (listForDebug) {
+				for (var i = 0; i < config.includeWithoutDebug.length; i++) {
+					if (fullPath.indexOf(config.includeWithoutDebug[i]) >= 0) {
+						return;
+					}
+				}
+			}
+
             if (stat.isFile()) {
-				if (extensions && extensions.length > 0) {
+				if (listForDebug) {
 					for (var i = 0; i < extensions.length; i++) {
 						extension = extensions[i];
 						if (fullPath.substr(-(extension.length)) == extension) {
@@ -61,7 +71,7 @@ function getAllFiles(extensions, ignoreFolders) {
                 }
             }
             else {
-				if (!ignoreFolders) {
+				if (!listForDebug) {
 					files.push(fullPath.substr(baseDir.length));
 				}
                 walk(fullPath);
