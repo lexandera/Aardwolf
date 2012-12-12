@@ -11,6 +11,8 @@ var config = require('../config/config.defaults.js');
 var util = require('./server-util.js');
 var rewriter = require('../rewriter/jsrewriter.js');
 
+var fileCache = {};
+
 
 function run() {
     if (!fs.existsSync(config.fileServerBaseDir)) {
@@ -18,53 +20,27 @@ function run() {
         process.exit(1);
     }
 
+	if (fs.existsSync('./cache.json')) {
+		fileCache = JSON.parse(fs.readFileSync('./cache.json').toString());
+	}
+
 	processFiles();
+	fs.writeFileSync('./cache.json', JSON.stringify(fileCache));
 
 	// TODO: watch for file changes
 }
 
 function processFiles() {
 	var files = util.getAllFiles(),
-		serverBaseDir = path.normalize(config.fileServerBaseDir),
 		destBaseDir = path.normalize(config.outputDir),
-		content,
-		origFilePath,
-		destFilePath,
-		fileName;
+		content;
 
 	if (!fs.existsSync(destBaseDir)) {
 		fs.mkdirSync(destBaseDir);
 	}
 
 	for (var i = 0; i < files.length; i++) {
-		fileName = files[i];
-
-		if (validFile(fileName)) {
-			origFilePath = path.join(serverBaseDir, fileName);
-			destFilePath = path.join(destBaseDir, fileName);
-
-			if (!fs.statSync(origFilePath).isFile()) {
-				try {
-					fs.mkdirSync(destFilePath);
-				} catch(e) {
-					// The folder already exists
-				}
-			} else if (fileName.substr(-3) === '.js' || fileName === config.indexFile) {
-				content = fs.readFileSync(origFilePath).toString();
-				if (fileName === config.indexFile) {
-					// Inject aardwolf script in index
-					var where = content.indexOf(config.whereToInsertAardwolf) + config.whereToInsertAardwolf.length;
-
-					content = [content.slice(0, where), config.aarwolfScript, '\n', content.slice(where)].join('');
-				} else {
-					// Instrument JS code
-					content = rewriter.addDebugStatements(fileName, content);
-				}
-				fs.writeFileSync(destFilePath, content);
-			} else {
-				util.copyFileSync(origFilePath, destFilePath);
-			}
-		}
+		processFile(files[i], false);
 	}
 
 	// Copy Aardwolf script
@@ -79,6 +55,57 @@ function processFiles() {
 	fs.writeFileSync(path.join(destBaseDir, 'aardwolf.js'), content);
 }
 
+function processFile(fileName, writeCache) {
+	if (validFile(fileName)) {
+		var serverBaseDir = path.normalize(config.fileServerBaseDir),
+			destBaseDir = path.normalize(config.outputDir),
+			origFilePath = path.join(serverBaseDir, fileName),
+			destFilePath = path.join(destBaseDir, fileName),
+			fileStat = fs.statSync(origFilePath);
+
+		log('Processing ' + fileName + '... ');
+
+		if (fileStat.isDirectory()) {
+			try {
+				fs.mkdirSync(destFilePath);
+			} catch(e) {
+				// The folder already exists
+			}
+			return;
+		}
+
+		if (fileCache[fileName] && (fileStat.mtime.getTime() == fileCache[fileName]) &&
+			fs.existsSync(destFilePath)) {
+			log('Skipping\n');
+			// File hasn't changed, ignore it
+			return;
+		}
+
+		if (fileName.substr(-3) === '.js' || fileName === config.indexFile) {
+			var content = fs.readFileSync(origFilePath).toString();
+			if (fileName === config.indexFile) {
+				// Inject aardwolf script in index
+				var where = content.indexOf(config.whereToInsertAardwolf) + config.whereToInsertAardwolf.length;
+
+				content = [content.slice(0, where), config.aarwolfScript, '\n', content.slice(where)].join('');
+			} else {
+				// Instrument JS code
+				content = rewriter.addDebugStatements(fileName, content);
+			}
+			fs.writeFileSync(destFilePath, content);
+		} else {
+			util.copyFileSync(origFilePath, destFilePath);
+		}
+
+		fileCache[fileName] = fileStat.mtime.getTime();
+		if (writeCache) {
+			fs.writeFileSync('./cache.json', JSON.stringify(fileCache));
+		}
+
+		log('OK\n');
+	}
+}
+
 function validFile(path) {
 	for (var i = 0; i < config.ignoreFiles.length; i++) {
 		if (path.indexOf(config.ignoreFiles[i]) >= 0) {
@@ -88,43 +115,10 @@ function validFile(path) {
 	return true;
 }
 
-
-/*function DebugFileServer(req, res) {
-    var requestedFile = url.parse(req.url).pathname;
-    var fileServerBaseDir = path.normalize(config.fileServerBaseDir);
-    var fullRequestedFilePath = path.join(fileServerBaseDir, requestedFile);
-
-
-    if (requestedFile.toLowerCase() == '/aardwolf.js') {
-        util.serveStaticFile(res, path.join(__dirname, '../js/aardwolf.js'));
-    }
-    else if (fs.existsSync(fullRequestedFilePath) &&
-             fs.statSync(fullRequestedFilePath).isFile() &&
-             fullRequestedFilePath.indexOf(fileServerBaseDir) === 0)
-    {
-        var rewriter;
-        if (requestedFile.substr(-3) == '.js') {
-            rewriter = require('../rewriter/jsrewriter.js');
-        }
-        else if (requestedFile.substr(-7) == '.coffee') {
-            rewriter = require('../rewriter/coffeerewriter.js');
-        }
-
-        if (rewriter) {
-            var content = fs.readFileSync(fullRequestedFilePath).toString();
-            content = rewriter.addDebugStatements(requestedFile, content);
-            res.writeHead(200, {'Content-Type': 'application/javascript'});
-            res.end(content);
-        }
-        else {
-            util.serveStaticFile(res, fullRequestedFilePath);
-        }
-    }
-    else {
-        res.writeHead(404, {'Content-Type': 'text/plain'});
-        res.end('NOT FOUND');
-    }
-}*/
-
+function log(m) {
+	if (config.verbose) {
+		process.stdout.write(m);
+	}
+}
 
 module.exports.run = run;

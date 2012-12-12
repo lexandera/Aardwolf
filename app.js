@@ -17,6 +17,8 @@ if (argv['file-port']) { config.fileServerPort    = argv['file-port']; }
 
 if (argv['o'])		   { config.outputDir = argv['o']; }
 
+if (argv['v'])		   { config.verbose = true; }
+
 try {
     /* Makes sure the path exists and gets rid of any trailing slashes. */
     config.fileServerBaseDir = fs.realpathSync(config.fileServerBaseDir);

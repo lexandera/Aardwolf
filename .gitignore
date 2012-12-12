@@ -1,3 +1,4 @@
 /config/config.local.js
 /node_modules/
 /nbproject/
+cache.json

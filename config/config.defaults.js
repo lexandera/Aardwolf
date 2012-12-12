@@ -14,6 +14,10 @@ var config = {};
 var path = require('path');
 var fs = require('fs');
 
+
+/* Verbose mode */
+config.verbose = false;
+
 /* Hostname or IP of the local machine */
 config.serverHost = '';
 
