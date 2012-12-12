@@ -11,7 +11,8 @@ var config = require('../config/config.defaults.js');
 var util = require('./server-util.js');
 var rewriter = require('../rewriter/jsrewriter.js');
 
-var fileCache = {};
+var cachePath,
+	fileCache = {};
 
 
 function run() {
@@ -20,13 +21,7 @@ function run() {
         process.exit(1);
     }
 
-	if (fs.existsSync('./cache.json')) {
-		fileCache = JSON.parse(fs.readFileSync('./cache.json').toString());
-	}
-
 	processFiles();
-	fs.writeFileSync('./cache.json', JSON.stringify(fileCache));
-
 	// TODO: watch for file changes
 }
 
@@ -37,6 +32,11 @@ function processFiles() {
 
 	if (!fs.existsSync(destBaseDir)) {
 		fs.mkdirSync(destBaseDir);
+	}
+	cachePath = path.join(destBaseDir, 'cache.json');
+
+	if (fs.existsSync(cachePath)) {
+		fileCache = JSON.parse(fs.readFileSync(cachePath).toString());
 	}
 
 	for (var i = 0; i < files.length; i++) {
@@ -53,6 +53,8 @@ function processFiles() {
 		.replace(/__FILE_SERVER_PORT__/g, config.fileServerPort);
 
 	fs.writeFileSync(path.join(destBaseDir, 'aardwolf.js'), content);
+
+	fs.writeFileSync(cachePath, JSON.stringify(fileCache));
 }
 
 function processFile(fileName, writeCache) {
@@ -99,7 +101,7 @@ function processFile(fileName, writeCache) {
 
 		fileCache[fileName] = fileStat.mtime.getTime();
 		if (writeCache) {
-			fs.writeFileSync('./cache.json', JSON.stringify(fileCache));
+			fs.writeFileSync(cachePath, JSON.stringify(fileCache));
 		}
 
 		log('OK\n');
