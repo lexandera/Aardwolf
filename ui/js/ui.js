@@ -12,12 +12,9 @@ var $stepOutBtn;
 var $stackTrace;
 
 $(function() {
-    $('#breakpoints').val(JSON.stringify([
-        ['/calc.js', 11], ['/calc.js', 25], ['/calc.js', 37],
-        ['/calc.coffee', 11], ['/calc.coffee', 21]
-    ]));
+    $('#breakpoints').val("");
     $('#eval').val("");
-    
+
     $('#btn-update-breakpoints').click(updateBreakpoints);
     $('#btn-breakon-next').click(setBreakOnNext);
     $('#btn-eval').click(evalCodeRemotely);
@@ -27,8 +24,8 @@ $(function() {
     $('#btn-step-in').click(breakpointStepIn);
     $('#btn-step-out').click(breakpointStepOut);
     $('#file-switcher').change(switcherSwitchFile);
-    
-    $continueBtn = $('#btn-continue'); 
+
+    $continueBtn = $('#btn-continue');
     $stepBtn = $('#btn-step');
     $stepOverBtn = $('#btn-step-over');
     $stepInBtn = $('#btn-step-in');
@@ -36,10 +33,10 @@ $(function() {
     $stackTrace = $('#stack');
     $codeContainer = $('#code-container');
     $code = $('#code');
-    
+
     loadSourceFiles();
     listenToServer();
-    
+
     showFile({ file: $('#file-switcher').val() });
 });
 
@@ -51,10 +48,10 @@ function initDebugger() {
 function loadSourceFiles() {
     var fileList = getFromServer('/files/list');
     files = {};
-    
+
     $('#file-switcher option').remove();
     addToFileSwitcher('', '<select file>');
-    
+
     fileList && fileList.files.forEach(function(f) {
         var fdata = getFromServer('/files/data/'+f);
         files[f] = fdata.data;
@@ -153,12 +150,12 @@ function showFile(data) {
     var keywordList;
     var literalList;
     var tokenize;
-    
+
     if (fileExt(data.file) == 'coffee') {
         keywordList = keywordListCoffeeScript;
         literalList = literalListCoffeScript;
         tokenize = tokenizeCoffeeScript;
-        
+
         $('#controls-coffeescript').show();
         $('#controls-javascript').hide();
     }
@@ -166,15 +163,15 @@ function showFile(data) {
         keywordList = keywordListJavaScript;
         literalList = literalListJavaScript;
         tokenize = tokenizeJavaScript;
-        
+
         $('#controls-coffeescript').hide();
         $('#controls-javascript').show();
     }
-    
+
     tokenize(files[data.file] || '', function(token, type) {
         var pre = '';
         var post = '';
-        
+
         if (type === 'word' && keywordList.indexOf(token) > -1) {
             pre = '<span class="keyword">';
             post = '</span>';
@@ -187,18 +184,18 @@ function showFile(data) {
             pre = '<span class="'+type+'">';
             post = '</span>';
         }
-        
+
         codeTokens.push(pre);
         codeTokens.push(token.replace(/</g, '&lt;'));
         codeTokens.push(post);
     });
-    
+
     var codeLines = codeTokens
         .join('')
         .split('\n')
         .map(function(x, i) {
             var num = String(i+1);
-            var paddedNum = '<span class="linenum" file="'+data.file+'" line="'+num+'">' + 
+            var paddedNum = '<span class="linenum" file="'+data.file+'" line="'+num+'">' +
                             '      '.substr(num.length) + num + ' ' +
                             '</span>';
             return paddedNum + ' ' + x;
@@ -207,18 +204,18 @@ function showFile(data) {
     $code.html(codeLines.join('\n'));
     $code.find('.linenum').click(toggleBreakpoint);
     paintBreakpoints(data.file);
-    
+
     var numLines = codeLines.length;
     var textAreaHeight = $codeContainer.height();
     var textAreaContentHeight = $codeContainer[0].scrollHeight;
     var codeHeight = $code.height();
     var heightPerLine = codeHeight / numLines;
-    
+
     if (data.line) {
         highlightLine(data.line, numLines);
         enableContinueAndStep();
     }
-    
+
     if (textAreaContentHeight > textAreaHeight) {
         var scrollAmountPerLine = (textAreaContentHeight - textAreaHeight) / numLines;
         var scrollTo = Math.round(data.line * scrollAmountPerLine);
@@ -229,7 +226,7 @@ function showFile(data) {
 function highlightLine(line, numLines) {
     var codeHeight = $code.height();
     var heightPerLine = codeHeight / numLines;
-    
+
     $code.css({
         'background-image': 'url("img/breakpoint-arrow.png"), url("img/breakpoint-bg.png")',
         'background-repeat': 'no-repeat, no-repeat, repeat-y',
@@ -253,7 +250,7 @@ function paintBreakpoints(file) {
         }
     });
 }
-    
+
 function existsBreakpoint(f, l) {
     var breakpoints = safeJSONParse($('#breakpoints').val()) || [];
     return breakpoints.filter(function(b) { return b[0] == f && b[1] == l; }).length > 0;
@@ -265,23 +262,23 @@ function toggleBreakpoint() {
         alert('Could not parse the list of breakpoints!');
         return;
     }
-    
+
     var $marker = $(this);
     var file = $marker.attr('file');
     var line = $marker.attr('line');
     if (existsBreakpoint(file, line)) {
         $(this).removeClass('breakpoint');
-        
+
         breakpoints = breakpoints.filter(function(b) { return !(b[0] == file && b[1] == line); });
         $('#breakpoints').val(JSON.stringify(breakpoints));
     }
     else {
         $(this).addClass('breakpoint');
-        
+
         breakpoints.push([file, line]);
         $('#breakpoints').val(JSON.stringify(breakpoints));
     }
-    
+
     updateBreakpoints();
 }
 
@@ -311,7 +308,7 @@ function processOutput(data) {
             writeToConsole('Mobile device connected.');
             initDebugger();
             break;
-        case 'print-message': 
+        case 'print-message':
             writeToConsole('<b>'+data.type + '</b>: ' + data.message);
             break;
         case 'print-eval-result':
