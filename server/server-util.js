@@ -45,13 +45,22 @@ function getAllFiles(extensions) {
 			var listForDebug = !!extensions && extensions.length > 0;
 			var include = false;
 			var extension;
+			var i;
 
 			if (!validFile(fullPath)) {
 				return;
 			}
 
 			if (listForDebug) {
-				for (var i = 0; i < config.blackList.length; i++) {
+				if (stat.isFile()) {
+					for (i = 0; i < config.whiteList.length; i++) {
+
+						if (fullPath.indexOf(config.whiteList[i]) < 0) {
+							return;
+						}
+					}
+				}
+				for (i = 0; i < config.blackList.length; i++) {
 					if (fullPath.indexOf(config.blackList[i]) >= 0) {
 						return;
 					}
@@ -60,7 +69,7 @@ function getAllFiles(extensions) {
 
             if (stat.isFile()) {
 				if (listForDebug) {
-					for (var i = 0; i < extensions.length; i++) {
+					for (i = 0; i < extensions.length; i++) {
 						extension = extensions[i];
 						if (fullPath.substr(-(extension.length)) == extension) {
 							include = true;

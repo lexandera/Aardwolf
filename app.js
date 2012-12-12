@@ -32,6 +32,11 @@ if (!config.serverHost) {
     process.exit(1);
 }
 
+Array.prototype.equals = function (otherArray) {
+	return !(this < otherArray || otherArray < this);
+}
+
+
 var server = require('./server/server.js');
 server.run();
 

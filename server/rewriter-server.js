@@ -12,7 +12,11 @@ var util = require('./server-util.js');
 var rewriter = require('../rewriter/jsrewriter.js');
 
 var cachePath,
-	fileCache = {};
+	fileCache = {
+		files: {},
+		whiteList: [],
+		blackList: []
+	};
 
 
 function run() {
@@ -37,6 +41,15 @@ function processFiles() {
 
 	if (fs.existsSync(cachePath)) {
 		fileCache = JSON.parse(fs.readFileSync(cachePath).toString());
+
+		// Flush cache if white or black list has changed
+		if (!fileCache.blackList.equals(config.blackList) || !fileCache.whiteList.equals(config.whiteList)) {
+			fileCache = {
+				files: {},
+				whiteList: config.whiteList,
+				blackList: config.blackList
+			}
+		}
 	}
 
 	for (var i = 0; i < files.length; i++) {
@@ -77,7 +90,7 @@ function processFile(fileName, writeCache) {
 
 	log('Processing ' + fileName + '... ');
 
-	if (fileCache[fileName] && (fileStat.mtime.getTime() == fileCache[fileName]) &&
+	if (fileCache.files[fileName] && (fileStat.mtime.getTime() == fileCache.files[fileName]) &&
 		fs.existsSync(destFilePath)) {
 		log('Skipping\n');
 		// File hasn't changed, ignore it
@@ -92,13 +105,20 @@ function processFile(fileName, writeCache) {
 		}
 	}
 
+	for (i = 0; i < config.whiteList.length; i++) {
+		if (fileName.indexOf(config.whiteList[i]) < 0) {
+			mustDebug = false;
+			break;
+		}
+	}
 	if ((mustDebug && fileName.substr(-3) === '.js') || fileName === config.indexFile) {
+
 		var content = fs.readFileSync(origFilePath).toString();
 		if (fileName === config.indexFile) {
 			// Inject aardwolf script in index
 			var where = content.indexOf(config.whereToInsertAardwolf) + config.whereToInsertAardwolf.length;
 
-			content = [content.slice(0, where), config.aarwolfScript, '\n', content.slice(where)].join('');
+			content = [content.slice(0, where), '\n', config.aardwolfScript, '\n', content.slice(where)].join('');
 		} else {
 			// Instrument JS code
 			content = rewriter.addDebugStatements(fileName, content);
@@ -108,7 +128,7 @@ function processFile(fileName, writeCache) {
 		util.copyFileSync(origFilePath, destFilePath);
 	}
 
-	fileCache[fileName] = fileStat.mtime.getTime();
+	fileCache.files[fileName] = fileStat.mtime.getTime();
 	if (writeCache) {
 		fs.writeFileSync(cachePath, JSON.stringify(fileCache));
 	}

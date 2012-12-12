@@ -39,8 +39,11 @@ config.ignoreFiles = ['.git', '.svn'];
 /* Files which won't be processed by the debugger */
 config.blackList = [];
 
+/* Force this files as the only ones to be processed by the debugger */
+config.whiteList = [];
+
 /* Index file of the application */
-config.indexFile = 'index.html';
+config.indexFile = '/index.html';
 
 /* After which tag insert aardwolf script in the modified index file */
 config.whereToInsertAardwolf = '<head>';
