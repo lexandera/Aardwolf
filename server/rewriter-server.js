@@ -38,21 +38,32 @@ function processFiles() {
 
 	for (var i = 0; i < files.length; i++) {
 		fileName = files[i];
-		origFilePath = path.join(serverBaseDir, fileName);
-		destFilePath = path.join(destBaseDir, fileName);
 
-		if (!fs.statSync(origFilePath).isFile() && validFile(fileName)) {
-			try {
-				fs.mkdirSync(destFilePath);
-			} catch(e) {
+		if (validFile(fileName)) {
+			origFilePath = path.join(serverBaseDir, fileName);
+			destFilePath = path.join(destBaseDir, fileName);
 
+			if (!fs.statSync(origFilePath).isFile()) {
+				try {
+					fs.mkdirSync(destFilePath);
+				} catch(e) {
+					// The folder already exists
+				}
+			} else if (fileName.substr(-3) === '.js' || fileName === config.indexFile) {
+				content = fs.readFileSync(origFilePath).toString();
+				if (fileName === config.indexFile) {
+					// Inject aardwolf script in index
+					var where = content.indexOf(config.whereToInsertAardwolf) + config.whereToInsertAardwolf.length;
+
+					content = [content.slice(0, where), config.aarwolfScript, '\n', content.slice(where)].join('');
+				} else {
+					// Instrument JS code
+					content = rewriter.addDebugStatements(fileName, content);
+				}
+				fs.writeFileSync(destFilePath, content);
+			} else {
+				util.copyFileSync(origFilePath, destFilePath);
 			}
-		} else if (fileName.substr(-3) === '.js') {
-			content = fs.readFileSync(origFilePath).toString();
-			content = rewriter.addDebugStatements(fileName, content);
-			fs.writeFileSync(destFilePath, content);
-		} else if (validFile(fileName)) {
-			util.copyFileSync(origFilePath, destFilePath);
 		}
 	}
 

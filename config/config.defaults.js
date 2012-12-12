@@ -16,17 +16,30 @@ var fs = require('fs');
 
 /* Hostname or IP of the local machine */
 config.serverHost = '';
+
 /* port on which the server listens for requests */
 config.serverPort = 8000;
 
 /* Full path to directory holding source files you wish to debug */
 config.fileServerBaseDir = path.join(__dirname, '../samples');
+
 /* Port on which files will be served */
 config.fileServerPort = 8500;
 
+/* Output folder in which to put debugging-enabled files */
 config.outputDir = path.join(__dirname, '../samples_output');
 
+/* Files which won't be copied to the output folder */
 config.ignoreFiles = ['.git', '.svn'];
+
+/* Index file of the application */
+config.indexFile = 'index.html';
+
+/* After which tag insert aardwolf script in the modified index file */
+config.whereToInsertAardwolf = '<head>';
+
+/* Aardwolf script tag */
+config.aardwolfScript = '<script type="text/javascript" src="aardwolf.js"></script>';
 
 module.exports = config;
 
