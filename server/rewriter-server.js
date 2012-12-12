@@ -58,73 +58,65 @@ function processFiles() {
 }
 
 function processFile(fileName, writeCache) {
-	if (validFile(fileName)) {
-		var serverBaseDir = path.normalize(config.fileServerBaseDir),
-			destBaseDir = path.normalize(config.outputDir),
-			origFilePath = path.join(serverBaseDir, fileName),
-			destFilePath = path.join(destBaseDir, fileName),
-			fileStat = fs.statSync(origFilePath);
+
+	var serverBaseDir = path.normalize(config.fileServerBaseDir),
+		destBaseDir = path.normalize(config.outputDir),
+		origFilePath = path.join(serverBaseDir, fileName),
+		destFilePath = path.join(destBaseDir, fileName),
+		fileStat = fs.statSync(origFilePath);
 
 
-		if (fileStat.isDirectory()) {
-			try {
-				fs.mkdirSync(destFilePath);
-			} catch(e) {
-				// The folder already exists
-			}
-			return;
+	if (fileStat.isDirectory()) {
+		try {
+			fs.mkdirSync(destFilePath);
+		} catch(e) {
+			// The folder already exists
 		}
+		return;
+	}
 
-		log('Processing ' + fileName + '... ');
+	log('Processing ' + fileName + '... ');
 
-		if (fileCache[fileName] && (fileStat.mtime.getTime() == fileCache[fileName]) &&
-			fs.existsSync(destFilePath)) {
-			log('Skipping\n');
-			// File hasn't changed, ignore it
-			return;
+	if (fileCache[fileName] && (fileStat.mtime.getTime() == fileCache[fileName]) &&
+		fs.existsSync(destFilePath)) {
+		log('Skipping\n');
+		// File hasn't changed, ignore it
+		return;
+	}
+
+	var mustDebug = true;
+	for (var i = 0; i < config.blackList.length; i++) {
+		if (fileName.indexOf(config.blackList[i]) >= 0) {
+			mustDebug = false;
+			break;
 		}
+	}
 
-		var mustDebug = true;
-		for (var i = 0; i < config.includeWithoutDebug.length; i++) {
-			if (fileName.indexOf(config.includeWithoutDebug[i]) >= 0) {
-				mustDebug = false;
-				break;
-			}
-		}
+	if ((mustDebug && fileName.substr(-3) === '.js') || fileName === config.indexFile) {
+		var content = fs.readFileSync(origFilePath).toString();
+		if (fileName === config.indexFile) {
+			// Inject aardwolf script in index
+			var where = content.indexOf(config.whereToInsertAardwolf) + config.whereToInsertAardwolf.length;
 
-		if ((mustDebug && fileName.substr(-3) === '.js') || fileName === config.indexFile) {
-			var content = fs.readFileSync(origFilePath).toString();
-			if (fileName === config.indexFile) {
-				// Inject aardwolf script in index
-				var where = content.indexOf(config.whereToInsertAardwolf) + config.whereToInsertAardwolf.length;
-
-				content = [content.slice(0, where), config.aarwolfScript, '\n', content.slice(where)].join('');
-			} else {
-				// Instrument JS code
-				content = rewriter.addDebugStatements(fileName, content);
-			}
-			fs.writeFileSync(destFilePath, content);
+			content = [content.slice(0, where), config.aarwolfScript, '\n', content.slice(where)].join('');
 		} else {
-			util.copyFileSync(origFilePath, destFilePath);
+			// Instrument JS code
+			content = rewriter.addDebugStatements(fileName, content);
 		}
-
-		fileCache[fileName] = fileStat.mtime.getTime();
-		if (writeCache) {
-			fs.writeFileSync(cachePath, JSON.stringify(fileCache));
-		}
-
-		log('OK\n');
+		fs.writeFileSync(destFilePath, content);
+	} else {
+		util.copyFileSync(origFilePath, destFilePath);
 	}
+
+	fileCache[fileName] = fileStat.mtime.getTime();
+	if (writeCache) {
+		fs.writeFileSync(cachePath, JSON.stringify(fileCache));
+	}
+
+	log('OK\n');
 }
 
-function validFile(path) {
-	for (var i = 0; i < config.ignoreFiles.length; i++) {
-		if (path.indexOf(config.ignoreFiles[i]) >= 0) {
-			return false;
-		}
-	}
-	return true;
-}
+
 
 function log(m) {
 	if (config.verbose) {

@@ -12,7 +12,7 @@ var $stepOutBtn;
 var $stackTrace;
 
 $(function() {
-    $('#breakpoints').val("");
+    $('#breakpoints').val("[]");
     $('#eval').val("");
 
     $('#btn-update-breakpoints').click(updateBreakpoints);

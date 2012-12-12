@@ -36,8 +36,8 @@ config.outputDir = path.join(__dirname, '../samples_output');
 /* Files which won't be copied to the output folder */
 config.ignoreFiles = ['.git', '.svn'];
 
-/* Files which won't be processed to be debugged */
-config.includeWithoutDebug = [];
+/* Files which won't be processed by the debugger */
+config.blackList = [];
 
 /* Index file of the application */
 config.indexFile = 'index.html';

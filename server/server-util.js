@@ -46,9 +46,13 @@ function getAllFiles(extensions) {
 			var include = false;
 			var extension;
 
+			if (!validFile(fullPath)) {
+				return;
+			}
+
 			if (listForDebug) {
-				for (var i = 0; i < config.includeWithoutDebug.length; i++) {
-					if (fullPath.indexOf(config.includeWithoutDebug[i]) >= 0) {
+				for (var i = 0; i < config.blackList.length; i++) {
+					if (fullPath.indexOf(config.blackList[i]) >= 0) {
 						return;
 					}
 				}
@@ -85,6 +89,15 @@ function getAllFiles(extensions) {
     files = files.map(function(f) { return f.replace(/\\/g, '/'); });
 
     return files;
+}
+
+function validFile(path) {
+	for (var i = 0; i < config.ignoreFiles.length; i++) {
+		if (path.indexOf(config.ignoreFiles[i]) >= 0) {
+			return false;
+		}
+	}
+	return true;
 }
 
 function copyFileSync (srcFile, destFile) {
