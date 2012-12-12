@@ -1,17 +1,18 @@
 'use strict';
 
-/* 
- * 
- * To change defaults set in this file create a file called config.local.js 
+/*
+ *
+ * To change defaults set in this file create a file called config.local.js
  * in the same directory and override values like this:
- * 
+ *
  *     var config = require('../config/config.defaults.js');
  *     config.setting = 'new_value';
- * 
+ *
  */
 
 var config = {};
 var path = require('path');
+var fs = require('fs');
 
 /* Hostname or IP of the local machine */
 config.serverHost = '';
@@ -23,12 +24,14 @@ config.fileServerBaseDir = path.join(__dirname, '../samples');
 /* Port on which files will be served */
 config.fileServerPort = 8500;
 
+config.outputDir = path.join(__dirname, '../samples_output');
 
+config.ignoreFiles = ['.git', '.svn'];
 
 module.exports = config;
 
 /* Load overrides from config.local.js if it exists */
 var localConf = path.join(__dirname, 'config.local.js');
-if (path.existsSync(localConf)) {
+if (fs.existsSync(localConf)) {
     require(localConf);
 }
