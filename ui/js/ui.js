@@ -69,7 +69,10 @@ function setBreakOnNext() {
 }
 
 function evalCodeRemotely() {
-    postToServer({ command: 'eval', data: $('#eval').val() });
+	var data =  $('#eval').val();
+
+	data = data.replace(/\bthis\b/, '__this');
+    postToServer({ command: 'eval', data: data});
 }
 
 function breakpointContinue() {
@@ -305,7 +308,7 @@ function clearStackTrace() {
 function processOutput(data) {
     switch (data.command) {
         case 'mobile-connected':
-            writeToConsole('Mobile device connected.');
+            writeToConsole('Remote device connected.');
             initDebugger();
             break;
         case 'print-message':
