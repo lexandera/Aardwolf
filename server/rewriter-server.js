@@ -124,7 +124,7 @@ function processFile(fileName, writeCache) {
 		}
 	}
 
-	if (mustDebug) {
+	if (mustDebug && config.whiteList.length > 0) {
 		mustDebug = false;
 		for (i = 0; i < config.whiteList.length; i++) {
 			if (fileName.indexOf(config.whiteList[i]) >= 0) {
