@@ -145,9 +145,12 @@ window.Aardwolf = new (function() {
     function getStack() {
         var callstack = [];
         var currentFunction = arguments.callee;
-        while (currentFunction = currentFunction.caller) {
+		var i = 0;
+        while ((i < 10) && currentFunction) {
             var fname = currentFunction.name || '<anonymous>';
             callstack.push(fname);
+			currentFunction = currentFunction.caller;
+			i++;
         }
         return callstack;
     }
