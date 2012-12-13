@@ -124,10 +124,13 @@ function processFile(fileName, writeCache) {
 		}
 	}
 
-	for (i = 0; i < config.whiteList.length; i++) {
-		if (fileName.indexOf(config.whiteList[i]) < 0) {
-			mustDebug = false;
-			break;
+	if (mustDebug) {
+		mustDebug = false;
+		for (i = 0; i < config.whiteList.length; i++) {
+			if (fileName.indexOf(config.whiteList[i]) >= 0) {
+				mustDebug = true;
+				break;
+			}
 		}
 	}
 	if ((mustDebug && fileName.substr(-3) === '.js') || fileName === config.indexFile) {
@@ -140,6 +143,7 @@ function processFile(fileName, writeCache) {
 			content = [content.slice(0, where), '\n', config.aardwolfScript, '\n', content.slice(where)].join('');
 		} else {
 			// Instrument JS code
+			log('Debugging ');
 			content = rewriter.addDebugStatements(fileName, content);
 		}
 		fs.writeFileSync(destFilePath, content);

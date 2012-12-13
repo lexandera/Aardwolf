@@ -52,16 +52,21 @@ function getAllFiles(extensions) {
 			}
 
 			if (listForDebug) {
-				if (stat.isFile()) {
-					for (i = 0; i < config.whiteList.length; i++) {
-
-						if (fullPath.indexOf(config.whiteList[i]) < 0) {
-							return;
-						}
-					}
-				}
 				for (i = 0; i < config.blackList.length; i++) {
 					if (fullPath.indexOf(config.blackList[i]) >= 0) {
+						return;
+					}
+				}
+				if (stat.isFile()) {
+					var valid = false;
+					for (i = 0; i < config.whiteList.length; i++) {
+
+						if (fullPath.indexOf(config.whiteList[i]) >= 0) {
+							valid = true;
+							break;
+						}
+					}
+					if (!valid) {
 						return;
 					}
 				}
