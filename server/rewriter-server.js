@@ -32,6 +32,12 @@ function run() {
 	// Watch for file changes
 	watch(serverBaseDir, function(fileName) {
 		if (fileName) {
+			for (var i = 0; i < config.ignoreFiles.length; i++) {
+				if (fileName.indexOf(config.ignoreFiles[i]) >= 0) {
+					return;
+				}
+			}
+
 			processFile(fileName.substr(serverBaseDir.length), true);
 		}
 	});
