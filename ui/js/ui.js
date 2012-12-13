@@ -13,7 +13,14 @@ var $stackTrace;
 
 $(function() {
     $('#breakpoints').val("[]");
+	$('#breakpoints').keydown(function(e) {
+		e.stopPropagation();
+	});
     $('#eval').val("");
+
+	$('#eval').keydown(function(e) {
+		e.stopPropagation();
+	});
 
     $('#btn-update-breakpoints').click(updateBreakpoints);
     $('#btn-breakon-next').click(setBreakOnNext);
@@ -33,6 +40,32 @@ $(function() {
     $stackTrace = $('#stack');
     $codeContainer = $('#code-container');
     $code = $('#code');
+
+	$(window).keydown(function(e) {
+		console.log(e.which)
+		switch(e.which) {
+			case 80: // P - Continue
+				if ($continueBtn.attr('disabled') == null) {
+					breakpointContinue();
+				}
+				break;
+			case 79: // O- Over
+				if ($stepOverBtn.attr('disabled') == null) {
+					breakpointStepOver();
+				}
+				break;
+			case 78: // I- In
+				if ($stepInBtn.attr('disabled') == null) {
+					breakpointStepIn();
+				}
+				break;
+			case 77: // U- Out
+				if ($stepOutBtn.attr('disabled') == null) {
+					breakpointStepOut();
+				}
+				break;
+		}
+	});
 
     loadSourceFiles();
     listenToServer();
