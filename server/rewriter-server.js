@@ -37,8 +37,9 @@ function run() {
 					return;
 				}
 			}
-
-			processFile(fileName.substr(serverBaseDir.length), true);
+			var file = fileName.substr(serverBaseDir.length);
+			file = file.replace(/\\/g, '/');
+			processFile(file, true);
 		}
 	});
 }

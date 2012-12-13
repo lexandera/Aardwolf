@@ -57,7 +57,7 @@ function getAllFiles(extensions) {
 						return;
 					}
 				}
-				if (stat.isFile()) {
+				if (stat.isFile() && config.whiteList.length > 0) {
 					var valid = false;
 					for (i = 0; i < config.whiteList.length; i++) {
 
