@@ -6,6 +6,7 @@
 
 var path = require('path');
 var fs = require('fs');
+var watch = require('node-watch');
 
 var config = require('../config/config.defaults.js');
 var util = require('./server-util.js');
@@ -26,7 +27,14 @@ function run() {
     }
 
 	processFiles();
-	// TODO: watch for file changes
+
+	var serverBaseDir = path.normalize(config.fileServerBaseDir);
+	// Watch for file changes
+	watch(serverBaseDir, function(fileName) {
+		if (fileName) {
+			processFile(fileName.substr(serverBaseDir.length), true);
+		}
+	});
 }
 
 function processFiles() {
@@ -76,8 +84,13 @@ function processFile(fileName, writeCache) {
 		destBaseDir = path.normalize(config.outputDir),
 		origFilePath = path.join(serverBaseDir, fileName),
 		destFilePath = path.join(destBaseDir, fileName),
-		fileStat = fs.statSync(origFilePath);
+		fileStat;
 
+	if (!fs.existsSync(origFilePath)) {
+		return;
+	}
+
+	fileStat = fs.statSync(origFilePath);
 
 	if (fileStat.isDirectory()) {
 		try {

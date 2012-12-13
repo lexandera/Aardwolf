@@ -5,7 +5,8 @@
     "author": "Aleksander Kmetec <aleksander.kmetec@gmail.com>",
     "dependencies": {
         "coffee-script": "1.1.2",
-        "optimist": "0.2.6"
+        "optimist": "0.2.6",
+	"node-watch": "0.2.4"
     },
     "version": "0.0.0"
 }
