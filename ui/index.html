@@ -3,17 +3,19 @@
     <head>
         <title>Aardwolf UI</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        
+
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.js"></script>
         <script type="text/javascript" src="js/jstokenizer.js"></script>
         <script type="text/javascript" src="js/coffeetokenizer.js"></script>
         <script type="text/javascript" src="js/ui.js"></script>
-        
+
         <link href="css/ui.css" rel="stylesheet" type="text/css" />
         <link href="css/buttons.css" rel="stylesheet" type="text/css" />
-        
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/ui-lightness/jquery-ui.css" type="text/css" media="all" />
+
     </head>
-    
+
     <body>
         <div id="top-toolbar">
             <button id="btn-continue" class="button play green" disabled>continue</button>
@@ -21,45 +23,49 @@
                 <button id="btn-step" class="button next green" disabled>step</button>
             </span>
             <span id="controls-javascript">
-                Step: 
+                Step:
                 <button id="btn-step-over" class="button step-over green" disabled>over</button>
                 <button id="btn-step-in" class="button step-in green" disabled>in</button>
                 <button id="btn-step-out" class="button step-out green" disabled>out</button>
             </span>
-            
-            File: 
-            
+
+            File:
+
             <select id="file-switcher">
             </select>
         </div>
-    
-    
+
+
         <div id="center-panels">
             <div id="code-container">
                 <div id="code">&nbsp;</div>
             </div>
-            
+
             <div id="sidebar" class="">
                 <h2>Breakpoints</h2>
                 <textarea id="breakpoints"></textarea>
                 <button id="btn-update-breakpoints" class="button small">update breakpoints</button>
                 <button id="btn-breakon-next" class="button small">break on next</button>
-            
+
                 <h2>Console</h2>
                 <textarea id="eval"></textarea>
                 <button id="btn-eval" class="button small">eval()</button>
-                
+
+				<h2>Inspect</h2>
+                <textarea id="inspect"></textarea>
+                <button id="btn-inspect" class="button small">Inspect</button>
+
                 <h2>Call stack</h2>
                 <pre id="stack">
                 </pre>
-            
+
             </div>
         </div>
-        
+
         <div id="output">
         </div>
-        
-        
+
+
     </body>
 </html>
 

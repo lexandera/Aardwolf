@@ -23,7 +23,7 @@ h2 {
     clear: both;
     font-weight: bold;
     font-size: 16px;
-    
+
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
     -webkit-user-select: none;
@@ -45,10 +45,10 @@ pre {
     height: 50px;
     width: 100%;
     z-index: 500;
-    
+
     padding: 5px 0 5px 10px;
     border-bottom: 1px solid #aaa;
-    
+
     background-image: -webkit-linear-gradient(top, #F0F0F0, #ccc);
     background-image: -moz-linear-gradient(top,    #F0F0F0, #ccc);
     background-image: -ms-linear-gradient(top,     #F0F0F0, #ccc);
@@ -61,14 +61,14 @@ pre {
     display: block;
     width: 100%;
     height: 100%;
-    
+
     padding-top: 50px;
     padding-right: 350px;
     padding-bottom: 250px;
-    
+
     margin: 0;
     border: 0;
-    
+
     overflow: hidden;
     z-index: 400;
 }
@@ -122,13 +122,13 @@ pre {
     display: block;
     width: 350px;
     padding: 5px;
-    
+
     position: absolute;
     right: 0px;
     top: 50px;
     bottom: 250px;
-    
-    overflow: hidden;
+
+    overflow: auto;
     border-left: 2px solid #bbb;
     background: #f7f7f7;
 }
@@ -140,10 +140,10 @@ pre {
     bottom: 0;
     height: 250px;
     width: 100%;
-    
+
     background: white;
     font-family: "Courier New";
-    
+
     z-index: 500;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -154,7 +154,7 @@ textarea {
     width: 100%;
     font-family: "Courier New";
     font-size: 14px;
-    min-height: 75px;
+    min-height: 25px;
     max-width: 100%;
 }
 
