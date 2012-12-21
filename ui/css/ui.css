@@ -158,6 +158,10 @@ textarea {
     max-width: 100%;
 }
 
+textarea#eval {
+	min-height: 100px;
+}
+
 
 #output div {
     border-bottom: 1px solid #bbb;

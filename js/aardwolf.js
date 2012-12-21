@@ -26,14 +26,9 @@ window.Aardwolf = new (function() {
                         var cmd = safeJSONParse(asyncXHR.responseText);
 
                         if (cmd && cmd.command == 'eval') {
-                            doEval(function(aardwolfEval) { return eval(aardwolfEval); }, cmd, 'print-eval-result');
+                            doEval(function(aardwolfEval) { return eval(aardwolfEval); }, cmd);
                         }
-                        else if (cmd && cmd.command == 'inspect-var') {
-							doEval(function(aardwolfEval) {
-								var obj = eval(aardwolfEval);
-								return JSON.stringify(obj);
-							}, cmd, 'print-inspect-result');
-						} else {
+                        else {
                             processCommand(cmd);
                         }
 
@@ -133,7 +128,7 @@ window.Aardwolf = new (function() {
         }
     }
 
-    function doEval(evalScopeFunc, cmd, command) {
+    function doEval(evalScopeFunc, cmd) {
         var evalResult;
         try {
             evalResult = evalScopeFunc(cmd.data);
@@ -141,7 +136,7 @@ window.Aardwolf = new (function() {
             evalResult = 'ERROR: ' + ex.toString();
         }
         sendToServer('/console', {
-            command: command,
+            command: 'print-eval-result',
             input: cmd.data,
             result: evalResult
         });

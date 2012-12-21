@@ -37,7 +37,6 @@ $(function() {
     $('#btn-step-over').click(breakpointStepOver);
     $('#btn-step-in').click(breakpointStepIn);
     $('#btn-step-out').click(breakpointStepOut);
-	$('#btn-inspect').click(inspectVar);
     $('#file-switcher').change(switcherSwitchFile);
 
     $continueBtn = $('#btn-continue');
@@ -131,13 +130,6 @@ function breakpointStepCommand(command) {
 
 function breakpointStep(command) {
     breakpointStepCommand('breakpoint-step');
-}
-
-function inspectVar() {
-	var data =  $('#inspect').val();
-
-	data = data.replace(/\bthis\b/, '__this');
-	postToServer({ command: 'inspect-var', data: data });
 }
 
 function breakpointStepOver() {
@@ -361,14 +353,12 @@ function processOutput(data) {
         case 'print-message':
             writeToConsole('<b>'+data.type + '</b>: ' + data.message);
             break;
-		case 'print-inspect-result':
-			 writeToConsole(
+			/* writeToConsole(
 				'<b>INSPECT</b> INPUT: ' + data.input.replace(/\b__this\b/, 'this') +
 				'<br/>&nbsp;&nbsp;&nbsp; RESULT: ' +
 				JSON.stringify(JSON.parse(data.result), null, '\t')
 					.replace(/\n/g, '<br>&nbsp;&nbsp;&nbsp;')
-					.replace(/\t/g, '&nbsp;&nbsp;'));
-			break;
+					.replace(/\t/g, '&nbsp;&nbsp;'));*/
         case 'print-eval-result':
             writeToConsole('<b>EVAL</b> INPUT: ' + data.input.replace(/\b__this\b/, 'this') + ' RESULT: ' + data.result);
             break;
