@@ -353,14 +353,17 @@ function processOutput(data) {
         case 'print-message':
             writeToConsole('<b>'+data.type + '</b>: ' + data.message);
             break;
-			/* writeToConsole(
-				'<b>INSPECT</b> INPUT: ' + data.input.replace(/\b__this\b/, 'this') +
-				'<br/>&nbsp;&nbsp;&nbsp; RESULT: ' +
-				JSON.stringify(JSON.parse(data.result), null, '\t')
-					.replace(/\n/g, '<br>&nbsp;&nbsp;&nbsp;')
-					.replace(/\t/g, '&nbsp;&nbsp;'));*/
         case 'print-eval-result':
-            writeToConsole('<b>EVAL</b> INPUT: ' + data.input.replace(/\b__this\b/, 'this') + ' RESULT: ' + data.result);
+			try {
+				writeToConsole(
+					'<br/>&nbsp;&nbsp;&nbsp; <b>INPUT:</b> ' + data.input.replace(/\b__this\b/, 'this') +
+						'<br/>&nbsp;&nbsp;&nbsp; <b>RESULT:</b> ' +
+						JSON.stringify(JSON.parse(data.result), null, '\t')
+							.replace(/\n/g, '<br>&nbsp;&nbsp;&nbsp;')
+							.replace(/\t/g, '&nbsp;&nbsp;'));
+			} catch (e) {
+           		writeToConsole('<b>INPUT:</b> ' + data.input.replace(/\b__this\b/, 'this') + ' <b>RESULT:</b> ' + data.result);
+			}
             break;
         case 'report-exception':
             writeToConsole('<b>EXCEPTION</b>: ' + data.message + ' at ' + data.file + ', line ' + data.line);

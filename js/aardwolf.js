@@ -31,10 +31,8 @@ window.Aardwolf = new (function() {
                         else {
                             processCommand(cmd);
                         }
-                    } else {
-						alert('Timeout in aardword process, restarting');
-					}
-					setTimeout(listenToServer, 0);
+						setTimeout(listenToServer, 0);
+                    }
                 }
             };
             asyncXHR.send(null);
@@ -136,12 +134,24 @@ window.Aardwolf = new (function() {
         } catch (ex) {
             evalResult = 'ERROR: ' + ex.toString();
         }
-        sendToServer('/console', {
-            command: 'print-eval-result',
-            input: cmd.data,
-            result: evalResult
-        });
+		sendEvalResult(evalResult, cmd.data);
     }
+	function sendEvalResult(result, input) {
+		if (result instanceof Object) {
+			result = JSON.stringify(result, function(k, v) {
+				if (typeof v == "function") {
+					return "[function]";
+				}
+				return v;
+			});
+		}
+
+		sendToServer('/console', {
+			command: 'print-eval-result',
+			input: input,
+			result: result
+		});
+	}
 
     function getStack() {
         var callstack = [];
@@ -222,7 +232,15 @@ window.Aardwolf = new (function() {
             line: lastLine,
             stack: getStack().slice(1)
         });
-    }
+    };
+
+	this.inspect = function(object) {
+		if (object) {
+			sendEvalResult(object, 'Aaardwolf.inspect(variable)');
+		} else {
+			sendEvalResult('ERROR: Undefined variable', 'Aaardwolf.inspect');
+		}
+	};
 
     var stack = [];
     var stackDepth = 0;
