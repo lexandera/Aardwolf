@@ -158,14 +158,23 @@ textarea {
     max-width: 100%;
 }
 
-textarea#eval {
-	min-height: 100px;
-}
-
-
 #output div {
     border-bottom: 1px solid #bbb;
     padding: 3px;
+}
+
+
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+
+    /*
+      Introduced in IE 10.
+      See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+    */
+    -ms-user-select: none;
+    user-select: none;
 }
 
 

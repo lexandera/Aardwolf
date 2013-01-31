@@ -9,15 +9,42 @@ var $stepBtn;
 var $stepOverBtn;
 var $stepInBtn;
 var $stepOutBtn;
-var $stackTrace;
 
 $(function() {
 	$('#sidebar').resizable({
 		handles: 'w',
+		start: function() {
+			$(document.body).addClass('unselectable');
+		},
 		stop: function(e, ui) {
-			$('#sidebar').css('width', 'auto')
-            $('#sidebar').css('height', 'auto');
+			var sidebar = $('#sidebar');
+			sidebar.css('width', 'auto');
+			sidebar.css('height', 'auto');
+			$(document.body).removeClass('unselectable');
+
+			$('#code-container').css('width', sidebar.position().left);
         }
+	});
+
+	$('#output').resizable({
+		handles: 'n',
+		start: function() {
+			$(document.body).addClass('unselectable');
+		},
+		stop: function(e, ui) {
+			$(document.body).removeClass('unselectable');
+			$('#sidebar').css('bottom', $('#output').css('height'));
+
+			var code = $('#code-container'),
+				yCode,
+				yOutput,
+				codeHeight;
+
+			yCode = code.position().top;
+			yOutput = $('#output').position().top;
+			codeHeight = yOutput - yCode;
+			code.css('height', codeHeight);
+		}
 	});
     $('#breakpoints').val("[]");
 	$('#breakpoints').keydown(function(e) {
@@ -44,7 +71,6 @@ $(function() {
     $stepOverBtn = $('#btn-step-over');
     $stepInBtn = $('#btn-step-in');
     $stepOutBtn = $('#btn-step-out');
-    $stackTrace = $('#stack');
     $codeContainer = $('#code-container');
     $code = $('#code');
 
@@ -117,14 +143,12 @@ function evalCodeRemotely() {
 function breakpointContinue() {
     removeLineHightlight();
     disableContinueAndStep();
-    clearStackTrace();
     postToServer({ command: 'breakpoint-continue' });
 }
 
 function breakpointStepCommand(command) {
     removeLineHightlight();
     disableContinueAndStep();
-    clearStackTrace();
     postToServer({ command: command });
 }
 
@@ -184,7 +208,6 @@ function listenToServer() {
 function showBreakpoint(data) {
     showFile(data);
     $('#file-switcher').val(data.file);
-    $stackTrace.text(data.stack.join('\n'));
 }
 
 function showFile(data) {
@@ -338,10 +361,6 @@ function disableContinueAndStep() {
     $stepOverBtn.attr('disabled', true);
     $stepInBtn.attr('disabled', true);
     $stepOutBtn.attr('disabled', true);
-}
-
-function clearStackTrace() {
-    $stackTrace.text('');
 }
 
 function processOutput(data) {
