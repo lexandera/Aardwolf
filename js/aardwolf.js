@@ -31,9 +31,10 @@ window.Aardwolf = new (function() {
                         else {
                             processCommand(cmd);
                         }
-
-                        setTimeout(listenToServer, 0);
-                    }
+                    } else {
+						alert('Timeout in aardword process, restarting');
+					}
+					setTimeout(listenToServer, 0);
                 }
             };
             asyncXHR.send(null);
