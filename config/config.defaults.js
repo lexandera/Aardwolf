@@ -19,7 +19,7 @@ var fs = require('fs');
 config.verbose = false;
 
 /* Hostname or IP of the local machine */
-config.serverHost = '';
+config.serverHost = ''; // Can be retrieved automatically or asked to the user
 
 /* port on which the server listens for requests */
 config.serverPort = 8000;

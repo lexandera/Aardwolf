@@ -1,12 +1,13 @@
 {
-    "name": "aardwolf",
-    "description": "Aardwolf debugger",
+    "name": "aardwolf-plus",
+    "description": "Aardwolf++ debugger",
     "url": "http://lexandera.com/aardwolf",
-    "author": "Aleksander Kmetec <aleksander.kmetec@gmail.com>",
+    "author": "Aleksander Kmetec <aleksander.kmetec@gmail.com>. Javier López <jlopez@tid.es>",
     "dependencies": {
         "coffee-script": "1.1.2",
         "optimist": "0.2.6",
-	"node-watch": "0.2.4"
+	    "node-watch": "0.2.4",
+        "prompt": "0.2.9"
     },
     "version": "0.0.0"
 }

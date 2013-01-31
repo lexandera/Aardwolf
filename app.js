@@ -27,24 +27,63 @@ try {
     process.exit(1);
 }
 
-if (!config.serverHost) {
-    console.error("Please specify a valid hostname or IP for your computer using the \"-h\" command-line parameter.");
-    process.exit(1);
-}
-
 Array.prototype.equals = function (otherArray) {
 	return !(this < otherArray || otherArray < this);
 }
 
 
-var server = require('./server/server.js');
-server.run();
 
-var rewriterServer = require('./server/rewriter-server.js');
-rewriterServer.run();
+if (!config.serverHost) {
+
+	var ips = scanAvailableIPs();
+	if (ips.length > 1) {
+		console.log("Cannot decide which IP to use, please specify one of these");
+		ips.forEach(function(ip, i) {
+			console.log('[', i + 1, ']:', ip);
+		})
+
+		var prompt = require('prompt');
+		prompt.start();
+		prompt.get({name: 'selection', validator: /^\d{1}$/, empty: false}, function(err, result) {
+			var ip = ips[result.selection - 1];
+			console.log('Choosen option', ip);
+			config.serverHost = ip;
+			startApp();
+		})
+	} else {
+		config.serverHost = ips[0];
+		startApp();
+	}
+} else {
+	startApp();
+}
+
+function scanAvailableIPs() {
+	var os = require('os');
+	var interfaces = os.networkInterfaces(),
+		ips = [];
+	for (var dev in interfaces) {
+		interfaces[dev].forEach(function(details){
+			if (details.family == 'IPv4' && details.address != '127.0.0.1') {
+				ips.push(details.address);
+			}
+		});
+	}
+	return ips;
+}
+
+function startApp() {
+	var server = require('./server/server.js');
+	server.run();
+
+	var rewriterServer = require('./server/rewriter-server.js');
+	rewriterServer.run();
+
+	/*var debugFileServer = require('./server/debug-file-server.js');
+	 debugFileServer.run();*/
+}
 
 
-/*var debugFileServer = require('./server/debug-file-server.js');
-debugFileServer.run();*/
+
 
 
