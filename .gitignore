@@ -3,3 +3,5 @@
 /nbproject/
 cache.json
 samples_output
+.idea
+atlassian-ide-plugin.xml
