@@ -111,17 +111,27 @@ function initDebugger() {
 }
 
 function loadSourceFiles() {
+	var prevSelected = $('#file-switcher').val();
+
     var fileList = getFromServer('/files/list');
     files = {};
 
     $('#file-switcher option').remove();
     addToFileSwitcher('', '<select file>');
 
+	var isAvailable = false;
     fileList && fileList.files.forEach(function(f) {
+		if (f === prevSelected) {
+			isAvailable = true;
+		}
         var fdata = getFromServer('/files/data/'+f);
         files[f] = fdata.data;
         addToFileSwitcher(f, f);
     });
+
+	if (isAvailable) {
+		$('#file-switcher').val(prevSelected);
+	}
 }
 
 function updateBreakpoints() {
