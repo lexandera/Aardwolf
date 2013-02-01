@@ -110,6 +110,12 @@ pre {
 #code .linenum {
     color: black;
     cursor: pointer;
+    font-weight: bold;
+}
+#code .linenum.no-breakpoint {
+    color: white;
+    cursor: default;
+    font-weight: normal;
 }
 
 #code .linenum.breakpoint {

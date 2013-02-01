@@ -103,13 +103,14 @@ function AardwolfServer(req, res) {
 
                 /* check if we need to serve a UI file */
                 if (req.url.indexOf('/files/data/') === 0) {
-                    var requestedFile = req.url.substr(11);
+                    var requestedFile = req.url.substr(12);
                     var filesDir = path.normalize(config.fileServerBaseDir);
                     var fullRequestedFilePath = path.join(filesDir, requestedFile);
 
                     /* File must exist and must be located inside the filesDir */
                     if (fs.existsSync(fullRequestedFilePath) && fullRequestedFilePath.indexOf(filesDir) === 0) {
-                        ok200({ data: fs.readFileSync(fullRequestedFilePath).toString() });
+                        ok200({ data: fs.readFileSync(fullRequestedFilePath).toString(),
+								breakpoints: config.breakpointCache[requestedFile] || []});
                         break;
                     }
                 }

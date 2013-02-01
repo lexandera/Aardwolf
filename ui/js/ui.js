@@ -124,8 +124,11 @@ function loadSourceFiles() {
 		if (f === prevSelected) {
 			isAvailable = true;
 		}
-        var fdata = getFromServer('/files/data/'+f);
-        files[f] = fdata.data;
+        var fdata = getFromServer('/files/data/' + f);
+        files[f] = {
+			file: fdata.data,
+			breakpoints: fdata.breakpoints
+		};
         addToFileSwitcher(f, f);
     });
 
@@ -242,8 +245,10 @@ function showFile(data) {
         $('#controls-coffeescript').hide();
         $('#controls-javascript').show();
     }
-
-    tokenize(files[data.file] || '', function(token, type) {
+	if (!files[data.file]) {
+		return;
+	}
+    tokenize(files[data.file].file || '', function(token, type) {
         var pre = '';
         var post = '';
 
@@ -270,14 +275,19 @@ function showFile(data) {
         .split('\n')
         .map(function(x, i) {
             var num = String(i+1);
-            var paddedNum = '<span class="linenum" file="'+data.file+'" line="'+num+'">' +
+
+			var extraClass = '';
+			if (files[data.file].breakpoints.indexOf(i + 1) < 0) {
+				extraClass = ' no-breakpoint';
+			}
+            var paddedNum = '<span class="linenum'+ extraClass + '" file="'+data.file+'" line="'+num+'">' +
                             '      '.substr(num.length) + num + ' ' +
                             '</span>';
             return paddedNum + ' ' + x;
         });
 
     $code.html(codeLines.join('\n'));
-    $code.find('.linenum').click(toggleBreakpoint);
+    $code.find('.linenum:not(.no-breakpoint)').click(toggleBreakpoint);
     paintBreakpoints(data.file);
 
     var numLines = codeLines.length;

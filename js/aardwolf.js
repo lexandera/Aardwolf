@@ -54,7 +54,14 @@ window.Aardwolf = new (function() {
             var req = new XMLHttpRequest();
             req.open('POST', serverUrl + '/mobile' + path, false);
             req.setRequestHeader('Content-Type', 'application/json');
+			if (path === '/breakpoint') {
+				req.timeout = 0;
+			}
             req.send(JSON.stringify(payload));
+			if (!req.responseText) {
+				// Timeout, retry
+				return sendToServer(path, payload);
+			}
             return safeJSONParse(req.responseText);
         } catch (ex) {
             alert('Aardwolf encountered an error while sending data: ' + ex.toString());
@@ -201,13 +208,17 @@ window.Aardwolf = new (function() {
             }
 
             dropCommandConnection();
+
+			alert('SENDING BREAKPOINT ' + line);
             var cmd = sendToServer('/breakpoint', {
                 command: 'report-breakpoint',
                 file: file,
                 line: line,
                 stack: getStack().slice(1)
             });
+			alert('CONTINUING LOOP');
             listenToServer();
+
             if (!cmd) {
                 return;
             }

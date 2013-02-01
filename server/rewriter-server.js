@@ -97,6 +97,10 @@ function processFile(fileName, writeCache) {
 		return;
 	}
 
+	if (!config.breakpointCache) {
+		config.breakpointCache = {};
+	}
+
 	fileStat = fs.statSync(origFilePath);
 
 	if (fileStat.isDirectory()) {
@@ -110,12 +114,15 @@ function processFile(fileName, writeCache) {
 
 	log('Processing ' + fileName + '... ');
 
-	if (fileCache.files[fileName] && (fileStat.mtime.getTime() == fileCache.files[fileName]) &&
+	if (fileCache.files[fileName] && (fileStat.mtime.getTime() == fileCache.files[fileName].time) &&
 		fs.existsSync(destFilePath)) {
 		log('Skipping\n');
 		// File hasn't changed, ignore it
+		config.breakpointCache[fileName] = fileCache.files[fileName].breakpoints;
 		return;
 	}
+
+	var breakpoints = [];
 
 	var mustDebug = true;
 	for (var i = 0; i < config.blackList.length; i++) {
@@ -134,6 +141,7 @@ function processFile(fileName, writeCache) {
 			}
 		}
 	}
+
 	if ((mustDebug && fileName.substr(-3) === '.js') || fileName === config.indexFile) {
 
 		var content = fs.readFileSync(origFilePath).toString();
@@ -145,14 +153,20 @@ function processFile(fileName, writeCache) {
 		} else {
 			// Instrument JS code
 			log('Debugging ');
-			content = rewriter.addDebugStatements(fileName, content);
+			var processedFile = rewriter.addDebugStatements(fileName, content);
+			content = processedFile.file;
+
+			config.breakpointCache[fileName] = breakpoints = processedFile.breakpoints;
 		}
 		fs.writeFileSync(destFilePath, content);
 	} else {
 		util.copyFileSync(origFilePath, destFilePath);
 	}
 
-	fileCache.files[fileName] = fileStat.mtime.getTime();
+	fileCache.files[fileName] = {
+		time: fileStat.mtime.getTime(),
+		breakpoints: breakpoints
+	};
 	if (writeCache) {
 		fs.writeFileSync(cachePath, JSON.stringify(fileCache));
 	}
