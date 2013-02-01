@@ -14,6 +14,8 @@ window.Aardwolf = new (function() {
     var lastFile = '';
     var lastLine = '';
 
+	var listenTimeout = null;
+
     function listenToServer() {
         try {
             dropCommandConnection();
@@ -35,6 +37,11 @@ window.Aardwolf = new (function() {
                     }
                 }
             };
+			listenTimeout = setTimeout(function() {
+				dropCommandConnection();
+				listenToServer();
+			}, 50 * 1000); // Internal XHR timeout fires at 60 secs, we let an adecuate margin to restart the server.
+
             asyncXHR.send(null);
         } catch (ex) {
             alert('Aardwolf encountered an error while waiting for command: ' + ex.toString());
@@ -46,7 +53,11 @@ window.Aardwolf = new (function() {
         if (asyncXHR) {
             asyncXHR.abort();
         }
+		if (listenTimeout) {
+			clearTimeout(listenTimeout);
+		}
         asyncXHR = null;
+		listenTimeout = null;
     }
 
     function sendToServer(path, payload) {
@@ -209,14 +220,12 @@ window.Aardwolf = new (function() {
 
             dropCommandConnection();
 
-			alert('SENDING BREAKPOINT ' + line);
             var cmd = sendToServer('/breakpoint', {
                 command: 'report-breakpoint',
                 file: file,
                 line: line,
                 stack: getStack().slice(1)
             });
-			alert('CONTINUING LOOP');
             listenToServer();
 
             if (!cmd) {
