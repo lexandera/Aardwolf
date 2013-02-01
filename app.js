@@ -31,11 +31,16 @@ Array.prototype.equals = function (otherArray) {
 	return !(this < otherArray || otherArray < this);
 }
 
+var ips = scanAvailableIPs();
 
+if (config.serverHost && ips.indexOf(config.serverHost) < 0) {
+	console.error('Configured host', config.serverHost, 'is not valid. You don\'t have that IP');
+	console.error('Available IPs are:', ips);
+	process.exit(1);
+}
 
 if (!config.serverHost) {
 
-	var ips = scanAvailableIPs();
 	if (ips.length > 1) {
 		console.log("Cannot decide which IP to use, please specify one of these");
 		ips.forEach(function(ip, i) {
