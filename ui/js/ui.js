@@ -59,8 +59,10 @@ $(function() {
 		e.stopPropagation();
 		if (e.keyCode == 13) {
 			e.preventDefault();
-			evalCodeRemotely();
-			$('#eval').val("");
+			if ($('#eval').val().match(/\S/)) {
+				evalCodeRemotely();
+				$('#eval').val("");
+			}
 		}
 	});
 
