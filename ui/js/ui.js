@@ -1,6 +1,7 @@
 'use strict';
 
 var files = {};
+var breakpoints = [];
 var $codeContainer;
 var $code;
 
@@ -49,10 +50,6 @@ $(function() {
 			codeHeight = yOutput - yCode;
 			code.css('height', codeHeight);
 		}
-	});
-    $('#breakpoints').val("[]");
-	$('#breakpoints').keydown(function(e) {
-		e.stopPropagation();
 	});
     $('#eval').val("");
 
@@ -138,7 +135,7 @@ $(function() {
 
 function initDebugger() {
     loadSourceFiles();
-    postToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
+    postToServer({ command: 'set-breakpoints', data: breakpoints});
 }
 
 function loadSourceFiles() {
@@ -169,12 +166,44 @@ function loadSourceFiles() {
 }
 
 function updateBreakpoints() {
-    postToServer({ command: 'set-breakpoints', data: JSON.parse($('#breakpoints').val()) });
+    postToServer({ command: 'set-breakpoints', data: breakpoints });
     paintBreakpoints($('#file-switcher').val());
+
+	var ul = $('#breakpoints');
+	ul.empty();
+	breakpoints = breakpoints.sort(function(a, b) {
+		if (a[0] > b[0]) {
+			return 1;
+		} else if (a[0] < b[0]) {
+			return -1;
+		} else {
+			return (a[1] - b[1]);
+		}
+	});
+
+	$(breakpoints).each(function(i, breakpoint) {
+		ul.append(
+			$('<li>')
+				.append(
+					$('<button>')
+						.append('-')
+						.click(function() {
+							breakpoints.splice(i, 1);
+							updateBreakpoints();
+						})
+				)
+				.append(breakpoint[0] + ':' + breakpoint[1])
+				.append('<br>')
+				//.append('&nbsp;&nbsp;&nbsp;&nbsp;')
+				.append(
+					$('<span>').append(getLine(files[breakpoint[0]].file, breakpoint[1]))
+				)
+		);
+	})
 }
 
 function setBreakOnNext() {
-    postToServer({ command: 'break-on-next', data: JSON.parse($('#breakpoints').val()) });
+    postToServer({ command: 'break-on-next', data: breakpoints });
 }
 
 function evalCodeRemotely() {
@@ -368,12 +397,10 @@ function paintBreakpoints(file) {
 }
 
 function existsBreakpoint(f, l) {
-    var breakpoints = safeJSONParse($('#breakpoints').val()) || [];
     return breakpoints.filter(function(b) { return b[0] == f && b[1] == l; }).length > 0;
 }
 
 function toggleBreakpoint() {
-    var breakpoints = safeJSONParse($('#breakpoints').val());
     if (breakpoints === null) {
         alert('Could not parse the list of breakpoints!');
         return;
@@ -386,13 +413,11 @@ function toggleBreakpoint() {
         $(this).removeClass('breakpoint');
 
         breakpoints = breakpoints.filter(function(b) { return !(b[0] == file && b[1] == line); });
-        $('#breakpoints').val(JSON.stringify(breakpoints));
     }
     else {
         $(this).addClass('breakpoint');
 
         breakpoints.push([file, line]);
-        $('#breakpoints').val(JSON.stringify(breakpoints));
     }
 
     updateBreakpoints();
@@ -483,3 +508,10 @@ function hideBigEval() {
 	$('#btn-eval').hide();
 }
 
+function getLine(string, lineNo) {
+	var newString = string;
+	for (var i = 0; i < lineNo - 1; i++) {
+		newString = newString.slice(newString.indexOf('\n') + 1);
+	}
+	return newString.substring(0, newString.indexOf('\n'));
+}

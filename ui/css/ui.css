@@ -118,20 +118,20 @@ textarea {
     font-weight: bold;
 }
 #code .linenum.no-breakpoint {
-    color: white;
+    color: grey;
     cursor: default;
     font-weight: normal;
 }
 
 #code .linenum.breakpoint {
     font-weight: bold;
-    color: grey;
+    color: white;
     background-color: red;
 }
 
 #sidebar {
     display: block;
-    width: 350px;
+    width: 430px;
     padding: 5px;
 
     position: absolute;
@@ -210,6 +210,28 @@ textarea {
     right: 15px;
     top: 55px;
     z-index: 30;
+}
+
+#breakpoints {
+    list-style-type: none;
+    padding-left: 10px;
+}
+#breakpoints li {
+    border: 1px solid grey;
+    padding: 5px 10px;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    margin-bottom: 10px;
+    font-style: italic;
+    font-weight: bold;
+    overflow: auto;
+}
+#breakpoints li span {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    padding-left: 20px;
 }
 
 .unselectable {
