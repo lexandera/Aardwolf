@@ -10,6 +10,9 @@ var $stepOverBtn;
 var $stepInBtn;
 var $stepOutBtn;
 
+var clearOnConnect = true;
+var lineNum = 0;
+
 $(function() {
 	$('#sidebar').resizable({
 		handles: 'w',
@@ -65,6 +68,10 @@ $(function() {
     $('#btn-step-in').click(breakpointStepIn);
     $('#btn-step-out').click(breakpointStepOut);
     $('#file-switcher').change(switcherSwitchFile);
+
+	$('#clearConsoleConnect').change(function(e) {
+		clearOnConnect = $(this).attr('checked') !== undefined;
+	});
 
     $continueBtn = $('#btn-continue');
     $stepBtn = $('#btn-step');
@@ -386,6 +393,9 @@ function disableContinueAndStep() {
 function processOutput(data) {
     switch (data.command) {
         case 'mobile-connected':
+			if (clearOnConnect) {
+				clearConsole();
+			}
             writeToConsole('Remote device connected.');
             initDebugger();
             break;
@@ -421,9 +431,13 @@ function safeJSONParse(str) {
     }
 }
 
-var lineNum = 0;
+function clearConsole() {
+	lineNum = 0;
+	$('#output-inner').empty();
+}
+
 function writeToConsole(msg) {
-    $('<div></div>').html((++lineNum) + ': ' + msg).appendTo($('#output'))[0].scrollIntoView();
+    $('<div></div>').html((++lineNum) + ': ' + msg).appendTo($('#output-inner'))[0].scrollIntoView();
 }
 
 

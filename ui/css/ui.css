@@ -40,6 +40,14 @@ pre {
     margin: 0;
 }
 
+textarea {
+    width: 100%;
+    font-family: "Courier New";
+    font-size: 14px;
+    min-height: 25px;
+    max-width: 100%;
+}
+
 #top-toolbar {
     position: absolute;
     height: 50px;
@@ -120,8 +128,8 @@ pre {
 
 #code .linenum.breakpoint {
     font-weight: bold;
-    color: white;
-    background: red;
+    color: grey;
+    background-color: red;
 }
 
 #sidebar {
@@ -151,20 +159,14 @@ pre {
     font-family: "Courier New";
 
     z-index: 500;
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow: hidden;
 }
 
-
-textarea {
-    width: 100%;
-    font-family: "Courier New";
-    font-size: 14px;
-    min-height: 25px;
-    max-width: 100%;
+#output-inner {
+    overflow:auto;
+    height: 100%;
 }
-
-#output div {
+#output-inner div {
     border-bottom: 1px solid #bbb;
     padding: 3px;
 }
