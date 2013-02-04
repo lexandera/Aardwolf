@@ -41,10 +41,8 @@ pre {
 }
 
 textarea {
-    width: 100%;
     font-family: "Courier New";
     font-size: 14px;
-    max-width: 100%;
 }
 
 #top-toolbar {
@@ -174,22 +172,44 @@ textarea {
     border-top: 2px solid #aaaaaa;
 }
 
+#output-bar.big-bar {
+    position: absolute;
+    top: 50px;
+}
+
+.big-bar textarea {
+    min-height: 180px;
+}
+
 #eval {
     position: absolute;
     border: none;
+    right: 0px;
+    left: 50px;
 }
-#prompt {
+#output-bar span {
     color: #0040D0;
     border: none;
-    font-weight: bold;
-    line-height: 25px;
-    padding-left: 10px;
+    font-weight: bolder;
+    line-height: 29px;
     padding-right: 5px;
+}
+#showBig {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
 #btn-clear {
     position: absolute;
     right: 15px;
+}
+#btn-eval {
+    position: absolute;
+    right: 15px;
+    top: 55px;
+    z-index: 30;
 }
 
 .unselectable {

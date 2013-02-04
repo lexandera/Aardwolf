@@ -12,6 +12,7 @@ var $stepOutBtn;
 
 var clearOnConnect = true;
 var lineNum = 0;
+var evalBig = false;
 
 $(function() {
 	$('#sidebar').resizable({
@@ -57,12 +58,27 @@ $(function() {
 
 	$('#eval').keydown(function(e) {
 		e.stopPropagation();
-		if (e.keyCode == 13) {
+		if (!evalBig && e.keyCode == 13) {
 			e.preventDefault();
 			if ($('#eval').val().match(/\S/)) {
 				evalCodeRemotely();
 				$('#eval').val("");
 			}
+		}
+	});
+
+	$('#btn-eval').hide();
+
+	$('#btn-eval').click(function() {
+		evalCodeRemotely();
+		hideBigEval();
+	});
+
+	$('#showBig').click(function() {
+		if (evalBig) {
+			hideBigEval();
+		} else {
+			showBigEval();
 		}
 	});
 
@@ -453,4 +469,17 @@ function fileExt(fileName) {
     return fileName.split('.').slice(-1)[0];
 }
 
+function showBigEval() {
+	evalBig = true;
+	$('#showBig').html('&#8681;');
+	$('#output-bar').addClass('big-bar');
+	$('#btn-eval').show();
+}
+function hideBigEval() {
+	evalBig = false;
+	$('#showBig').html('&#8679;');
+	$('#output-bar').removeClass('big-bar');
+	$('#eval').val('');
+	$('#btn-eval').hide();
+}
 
