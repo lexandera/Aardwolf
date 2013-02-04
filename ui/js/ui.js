@@ -94,6 +94,8 @@ $(function() {
 		clearOnConnect = $(this).attr('checked') !== undefined;
 	});
 
+	$('#redirectConsole').change(toggleRedirectConsole);
+
     $continueBtn = $('#btn-continue');
     $stepBtn = $('#btn-step');
     $stepOverBtn = $('#btn-step-over');
@@ -163,6 +165,10 @@ function loadSourceFiles() {
 	if (isAvailable) {
 		$('#file-switcher').val(prevSelected);
 	}
+}
+
+function toggleRedirectConsole() {
+	postToServer({command: 'update-redirect-console', data: $('#redirectConsole').attr('checked') !== undefined});
 }
 
 function updateBreakpoints() {
@@ -445,6 +451,7 @@ function processOutput(data) {
 			if (clearOnConnect) {
 				clearConsole();
 			}
+			$('#redirectConsole').attr('checked', false);
             writeToConsole('Remote device connected.');
             initDebugger();
             break;

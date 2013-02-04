@@ -16,6 +16,8 @@ window.Aardwolf = new (function() {
 
 	var listenTimeout = null;
 
+	var consoleRedirected = false;
+
     function listenToServer() {
         try {
             dropCommandConnection();
@@ -94,17 +96,22 @@ window.Aardwolf = new (function() {
                    Make sure that the original function actually exists, otherwise this will
                    case an error on WindowsPhone where the console object is not available. */
                 oldFunc && oldFunc.apply(window.console, args);
-                sendToServer('/console', {
-                    command: 'print-message',
-                    type: f.toUpperCase(),
-                    message: args.toString()
-                });
+				if (consoleRedirected) {
+					sendToServer('/console', {
+						command: 'print-message',
+						type: f.toUpperCase(),
+						message: args.toString()
+					});
+				}
             };
         });
     }
 
     function processCommand(cmd) {
         switch (cmd.command) {
+			case 'update-redirect-console':
+				consoleRedirected = cmd.data;
+				return true;
             case 'set-breakpoints':
                 breakpoints = {};
                 cmd.data.forEach(function(bp) {
@@ -198,7 +205,7 @@ window.Aardwolf = new (function() {
             command: 'mobile-connected'
         });
         if (cmd) {
-            processCommand(cmd)
+            processCommand(cmd);
         }
         listenToServer();
     };
