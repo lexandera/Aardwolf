@@ -44,7 +44,6 @@ textarea {
     width: 100%;
     font-family: "Courier New";
     font-size: 14px;
-    min-height: 25px;
     max-width: 100%;
 }
 
@@ -164,13 +163,34 @@ textarea {
 
 #output-inner {
     overflow:auto;
-    height: 100%;
+    height: 88%;
 }
 #output-inner div {
     border-bottom: 1px solid #bbb;
     padding: 3px;
 }
+#output-bar {
+    width: 100%;
+    border-top: 2px solid #aaaaaa;
+}
 
+#eval {
+    position: absolute;
+    border: none;
+}
+#prompt {
+    color: #0040D0;
+    border: none;
+    font-weight: bold;
+    line-height: 25px;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+#btn-clear {
+    position: absolute;
+    right: 15px;
+}
 
 .unselectable {
     -moz-user-select: -moz-none;

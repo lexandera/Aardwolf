@@ -57,17 +57,23 @@ $(function() {
 
 	$('#eval').keydown(function(e) {
 		e.stopPropagation();
+		if (e.keyCode == 13) {
+			e.preventDefault();
+			evalCodeRemotely();
+			$('#eval').val("");
+		}
 	});
 
     $('#btn-update-breakpoints').click(updateBreakpoints);
     $('#btn-breakon-next').click(setBreakOnNext);
-    $('#btn-eval').click(evalCodeRemotely);
     $('#btn-continue').click(breakpointContinue);
     $('#btn-step').click(breakpointStep);
     $('#btn-step-over').click(breakpointStepOver);
     $('#btn-step-in').click(breakpointStepIn);
     $('#btn-step-out').click(breakpointStepOut);
     $('#file-switcher').change(switcherSwitchFile);
+
+	$('#btn-clear').click(clearConsole);
 
 	$('#clearConsoleConnect').change(function(e) {
 		clearOnConnect = $(this).attr('checked') !== undefined;
