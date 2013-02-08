@@ -15,6 +15,9 @@ var clearOnConnect = true;
 var lineNum = 0;
 var evalBig = false;
 
+var history = [];
+var currentHistoryPos = 0;
+
 $(function() {
 	$('#sidebar').resizable({
 		handles: 'w',
@@ -55,12 +58,34 @@ $(function() {
 
 	$('#eval').keydown(function(e) {
 		e.stopPropagation();
-		if (!evalBig && e.keyCode == 13) {
-			e.preventDefault();
-			if ($('#eval').val().match(/\S/)) {
-				evalCodeRemotely();
-				$('#eval').val("");
-			}
+
+		switch (e.keyCode) {
+			case 13: // Enter
+				if (!evalBig) {
+					e.preventDefault();
+					if ($('#eval').val().match(/\S/)) {
+						evalCodeRemotely();
+						$('#eval').val("");
+					}
+				}
+				break;
+			case 38: // Up
+				if (currentHistoryPos < history.length) {
+					$('#eval').val(history[currentHistoryPos++]);
+
+					if (currentHistoryPos === history.length) {
+						currentHistoryPos--;
+					}
+				}
+				break;
+			case 40: // Down
+				if (currentHistoryPos > 0) {
+					$('#eval').val(history[--currentHistoryPos]);
+				} else {
+					if ($('#eval').val() === history[currentHistoryPos]) {
+						$('#eval').val('');
+					}
+				}
 		}
 	});
 
@@ -216,6 +241,8 @@ function evalCodeRemotely() {
 	var data =  $('#eval').val();
 
 	data = data.replace(/\bthis\b/, '__this');
+	history.unshift(data);
+	currentHistoryPos = 0;
     postToServer({ command: 'eval', data: data});
 }
 

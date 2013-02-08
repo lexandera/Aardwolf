@@ -178,6 +178,7 @@ textarea {
     border-top: 2px solid #aaaaaa;
     position:absolute;
     bottom: 0px;
+    background-color: white;
 }
 
 #output-bar.big-bar {
