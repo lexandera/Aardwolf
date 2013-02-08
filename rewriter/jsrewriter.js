@@ -152,7 +152,7 @@ function addDebugStatements(filePath, text) {
             }
             out.push(token);
         }
-		if (token != ' ' && token != '\n') {
+		if (type != 'comment' && type != 'whitespace' && type != 'newline') {
 			prevToken = token;
 		}
     });
