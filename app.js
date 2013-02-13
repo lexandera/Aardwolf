@@ -19,6 +19,8 @@ if (argv['o'])		   { config.outputDir = argv['o']; }
 
 if (argv['v'])		   { config.verbose = true; }
 
+if (argv['white-list']){ config.whiteList = argv['white-list'].split(','); }
+
 try {
     /* Makes sure the path exists and gets rid of any trailing slashes. */
     config.fileServerBaseDir = fs.realpathSync(config.fileServerBaseDir);
