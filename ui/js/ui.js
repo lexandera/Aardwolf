@@ -70,20 +70,26 @@ $(function() {
 				}
 				break;
 			case 38: // Up
-				if (currentHistoryPos < history.length) {
-					$('#eval').val(history[currentHistoryPos++]);
+				if (!evalBig) {
+					e.preventDefault();
+					if (currentHistoryPos < history.length) {
+						$('#eval').val(history[currentHistoryPos++]);
 
-					if (currentHistoryPos === history.length) {
-						currentHistoryPos--;
+						if (currentHistoryPos === history.length) {
+							currentHistoryPos--;
+						}
 					}
 				}
 				break;
 			case 40: // Down
-				if (currentHistoryPos > 0) {
-					$('#eval').val(history[--currentHistoryPos]);
-				} else {
-					if ($('#eval').val() === history[currentHistoryPos]) {
-						$('#eval').val('');
+				if (!evalBig) {
+					e.preventDefault();
+					if (currentHistoryPos > 0) {
+						$('#eval').val(history[--currentHistoryPos]);
+					} else {
+						if ($('#eval').val() === history[currentHistoryPos]) {
+							$('#eval').val('');
+						}
 					}
 				}
 		}
