@@ -112,7 +112,7 @@ function addDebugStatements(filePath, text) {
                 out.push(buildExceptionInterceptorStart(wordAfterFunction || '<anonymous>', filePath, line));
             }
 
-			var invalidTokens = ['(', '[', ',', '=', ':', 'return'];
+			var invalidTokens = ['(', '[', ',', '=', ':', 'return', '|'];
 
 			if (openSwitch) {
 				openSwitch = false;
