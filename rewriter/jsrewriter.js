@@ -32,6 +32,8 @@ function addDebugStatements(filePath, text) {
 	var openSwitch = false;
 	var openCase = false;
 
+	var invalidTokens = ['(', '[', ',', '=', ':', 'return', '|', '?'];
+
 	var breakpoints = [];
 
 	function buildDebugStatement(file, line, isDebuggerStatement) {
@@ -111,8 +113,6 @@ function addDebugStatements(filePath, text) {
             if (nestingDepth.length > 1 && nestingDepth[nestingDepth.length-1] === 1) {
                 out.push(buildExceptionInterceptorStart(wordAfterFunction || '<anonymous>', filePath, line));
             }
-
-			var invalidTokens = ['(', '[', ',', '=', ':', 'return', '|'];
 
 			if (openSwitch) {
 				openSwitch = false;
