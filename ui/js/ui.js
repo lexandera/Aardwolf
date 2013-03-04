@@ -164,6 +164,14 @@ $(function() {
     listenToServer();
 
     showFile({ file: $('#file-switcher').val() });
+
+	if (window.localStorage) {
+		var strBreakpoints = window.localStorage.getItem('breakpoints');
+		if (strBreakpoints) {
+			breakpoints = JSON.parse(strBreakpoints);
+			updateBreakpoints();
+		}
+	}
 });
 
 function initDebugger() {
@@ -203,6 +211,36 @@ function toggleRedirectConsole() {
 }
 
 function updateBreakpoints() {
+	var breakpoint,
+		fileBreakpoints;
+	for (var i = 0; i < breakpoints.length; i++) {
+		breakpoint = breakpoints[i];
+
+		if (!files[breakpoint[0]] || !files[breakpoint[0]].file) {
+			breakpoints.splice(i, 1);
+			i--;
+			continue;
+		}
+
+		fileBreakpoints = files[breakpoint[0]].breakpoints;
+		if (fileBreakpoints.indexOf(parseInt(breakpoint[1], 10)) < 0) {
+			for (var j = 0; j < fileBreakpoints.length; j++) {
+				if (fileBreakpoints[j] > parseInt(breakpoint[1], 10)) {
+					break;
+				}
+			}
+			if (j < fileBreakpoints.length) {
+				breakpoint[1] = fileBreakpoints[j];
+			} else {
+				breakpoint[1] = fileBreakpoints[fileBreakpoints.length - 1];
+			}
+		}
+	}
+
+	if (window.localStorage) {
+		window.localStorage.setItem('breakpoints', JSON.stringify(breakpoints));
+	}
+
     postToServer({ command: 'set-breakpoints', data: breakpoints });
     paintBreakpoints($('#file-switcher').val());
 
