@@ -231,8 +231,6 @@ textarea {
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     margin-bottom: 10px;
-    font-style: italic;
-    font-weight: bold;
     overflow: auto;
 }
 #breakpoints li span {
@@ -240,6 +238,17 @@ textarea {
     font-weight: normal;
     font-size: 12px;
     padding-left: 20px;
+}
+
+#breakpoints li span.breakpoint {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+    cursor: pointer;
+    padding-left: 0px;
+}
+#breakpoints li span.breakpoint:hover {
+    text-decoration: underline;
 }
 
 .unselectable {

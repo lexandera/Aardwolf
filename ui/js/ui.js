@@ -111,6 +111,10 @@ $(function() {
 	});
 
     $('#btn-update-breakpoints').click(updateBreakpoints);
+	$('#btn-clear-breakpoints').click(function() {
+		breakpoints = [];
+		updateBreakpoints();
+	})
     $('#btn-breakon-next').click(setBreakOnNext);
     $('#btn-continue').click(breakpointContinue);
     $('#btn-step').click(breakpointStep);
@@ -267,7 +271,14 @@ function updateBreakpoints() {
 							updateBreakpoints();
 						})
 				)
-				.append(breakpoint[0] + ':' + breakpoint[1])
+				.append(
+					$('<span>')
+						.attr('class', 'breakpoint')
+						.append(breakpoint[0] + ':' + breakpoint[1])
+						.click(function() {
+							showFile({ file: breakpoint[0], goToLine: breakpoint[1]});
+						})
+				)
 				.append('<br>')
 				//.append('&nbsp;&nbsp;&nbsp;&nbsp;')
 				.append(
@@ -433,14 +444,18 @@ function showFile(data) {
     var codeHeight = $code.height();
     var heightPerLine = codeHeight / numLines;
 
+	var line = 0;
     if (data.line) {
+		line = data.line;
         highlightLine(data.line, numLines);
         enableContinueAndStep();
-    }
+    } else if (data.goToLine) {
+		line = data.goToLine;
+	}
 
     if (textAreaContentHeight > textAreaHeight) {
         var scrollAmountPerLine = (textAreaContentHeight - textAreaHeight) / numLines;
-        var scrollTo = Math.round(data.line * scrollAmountPerLine);
+        var scrollTo = Math.round(line * scrollAmountPerLine);
         $codeContainer.scrollTop(scrollTo);
     }
 }
