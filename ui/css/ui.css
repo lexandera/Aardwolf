@@ -23,7 +23,7 @@ h2 {
     clear: both;
     font-weight: bold;
     font-size: 16px;
-    
+
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
     -webkit-user-select: none;
@@ -40,15 +40,20 @@ pre {
     margin: 0;
 }
 
+textarea {
+    font-family: "Courier New";
+    font-size: 14px;
+}
+
 #top-toolbar {
     position: absolute;
-    height: 50px;
+    height: 60px;
     width: 100%;
     z-index: 500;
-    
-    padding: 5px 0 5px 10px;
+
+    padding: 8px 0 5px 10px;
     border-bottom: 1px solid #aaa;
-    
+
     background-image: -webkit-linear-gradient(top, #F0F0F0, #ccc);
     background-image: -moz-linear-gradient(top,    #F0F0F0, #ccc);
     background-image: -ms-linear-gradient(top,     #F0F0F0, #ccc);
@@ -56,19 +61,25 @@ pre {
     background-image: linear-gradient(top,         #F0F0F0, #ccc);
 }
 
+#options {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
 #center-panels {
     position: relative;
     display: block;
     width: 100%;
     height: 100%;
-    
-    padding-top: 50px;
-    padding-right: 350px;
+
+    padding-top: 60px;
+    padding-right: 430px;
     padding-bottom: 250px;
-    
+
     margin: 0;
     border: 0;
-    
+
     overflow: hidden;
     z-index: 400;
 }
@@ -110,25 +121,31 @@ pre {
 #code .linenum {
     color: black;
     cursor: pointer;
+    font-weight: bold;
+}
+#code .linenum.no-breakpoint {
+    color: grey;
+    cursor: default;
+    font-weight: normal;
 }
 
 #code .linenum.breakpoint {
     font-weight: bold;
     color: white;
-    background: red;
+    background-color: red;
 }
 
 #sidebar {
     display: block;
-    width: 350px;
+    width: 430px;
     padding: 5px;
-    
+
     position: absolute;
     right: 0px;
-    top: 50px;
+    top: 60px;
     bottom: 250px;
-    
-    overflow: hidden;
+
+    overflow: auto;
     border-left: 2px solid #bbb;
     background: #f7f7f7;
 }
@@ -140,28 +157,111 @@ pre {
     bottom: 0;
     height: 250px;
     width: 100%;
-    
+
     background: white;
     font-family: "Courier New";
-    
+
     z-index: 500;
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow: hidden;
 }
 
-
-textarea {
-    width: 100%;
-    font-family: "Courier New";
-    font-size: 14px;
-    min-height: 75px;
-    max-width: 100%;
+#output-inner {
+    overflow:auto;
+    height: 88%;
 }
-
-
-#output div {
+#output-inner div {
     border-bottom: 1px solid #bbb;
     padding: 3px;
+}
+#output-bar {
+    width: 100%;
+    border-top: 2px solid #aaaaaa;
+    position:absolute;
+    bottom: 0px;
+    background-color: white;
+}
+
+#output-bar.big-bar {
+    top: 50px;
+}
+
+.big-bar textarea {
+    min-height: 180px;
+}
+
+#eval {
+    position: absolute;
+    border: none;
+    right: 0px;
+    left: 50px;
+}
+#output-bar span {
+    color: #0040D0;
+    border: none;
+    font-weight: bolder;
+    line-height: 29px;
+    padding-right: 5px;
+}
+#showBig {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#btn-clear {
+    position: absolute;
+    right: 15px;
+}
+#btn-eval {
+    position: absolute;
+    right: 15px;
+    top: 55px;
+    z-index: 30;
+}
+
+#breakpoints {
+    list-style-type: none;
+    padding-left: 10px;
+}
+#breakpoints li {
+    border: 1px solid grey;
+    padding: 5px 10px;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    margin-bottom: 10px;
+    overflow: auto;
+}
+#breakpoints li span {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    padding-left: 20px;
+}
+
+#breakpoints li span.breakpoint {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+    cursor: pointer;
+    padding-left: 0px;
+}
+#breakpoints li span.breakpoint:hover {
+    text-decoration: underline;
+}
+
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+
+    /*
+      Introduced in IE 10.
+      See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+    */
+    -ms-user-select: none;
+    user-select: none;
 }
 
 

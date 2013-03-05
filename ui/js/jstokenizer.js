@@ -2,7 +2,7 @@
 
 var keywordListJavaScript = [
     'var', 'function', 'if', 'else', 'while', 'for', 'do', 'in', 'break', 'continue',
-    'switch', 'return', 'debugger', 'try', 'catch', 'throw', 'true', 'false'
+    'switch', 'return', 'debugger', 'try', 'catch', 'throw', 'true', 'false', 'this'
 ];
 
 
@@ -10,7 +10,7 @@ var literalListJavaScript = [
     'true', 'false', 'null', 'undefined'
 ];
 
-/* A simple JS tokenizer. We're really only interested in a couple of keywords, parentheses, 
+/* A simple JS tokenizer. We're really only interested in a couple of keywords, parentheses,
    brackets and semicolons, so it doesn't need to be complete as long as it correctly handles
    multi-word tokens such as strings and comments.
 */
@@ -18,10 +18,10 @@ function tokenizeJavaScript(str, onToken) {
     var len = str.length;
     var pos = 0;
     var validRegexPos = false;
-    
+
     while (pos < len) {
         var c = str[pos];
-        
+
         if (c === '"' || c === "'") {
             extractString(c);
         }
@@ -47,19 +47,19 @@ function tokenizeJavaScript(str, onToken) {
             extractChar();
         }
     }
-    
+
     function onTokenInternal(token, type) {
-        /* A slash following an assigment operator, a semicolon or an 
+        /* A slash following an assigment operator, a semicolon or an
            opening paren can be a regex literal delimiter. */
         if (type === 'char' && ':=;({'.indexOf(token) > -1) {
             validRegexPos = true;
         } else {
             validRegexPos = false;
         }
-        
+
         onToken(token, type);
     }
-    
+
     function extractSingleLineComment() {
         var endPos = str.indexOf("\n", pos);
         if (endPos === -1) {
@@ -68,7 +68,7 @@ function tokenizeJavaScript(str, onToken) {
         onTokenInternal(str.substring(pos, endPos), 'comment');
         pos = endPos;
     }
-    
+
     function extractMultiLineComment() {
         var endPos = pos;
         while (!(str[++endPos] === '*' && str[endPos+1] === '/'));
@@ -76,7 +76,7 @@ function tokenizeJavaScript(str, onToken) {
         onTokenInternal(str.substring(pos, endPos), 'comment');
         pos = endPos;
     }
-    
+
     function extractRegexLiteral() {
         var endPos = pos;
         /* regex literal body /.../ */
@@ -90,7 +90,7 @@ function tokenizeJavaScript(str, onToken) {
         onTokenInternal(str.substring(pos, endPos), 'regex');
         pos = endPos;
     }
-    
+
     function extractString(quoteChar) {
         var endPos = pos;
         while (str[++endPos] != quoteChar) {
@@ -102,28 +102,28 @@ function tokenizeJavaScript(str, onToken) {
         onTokenInternal(str.substring(pos, endPos), 'string');
         pos = endPos;
     }
-    
+
     function extractNumber() {
         var endPos = pos;
         while ('0123456789.eE'.indexOf(str[++endPos]) !== -1);
         onTokenInternal(str.substring(pos, endPos), 'number');
         pos = endPos;
     }
-    
+
     function extractWord() {
         var endPos = pos;
         while (str[++endPos].match(/^[a-zA-Z_$0-9]$/) !== null);
         onTokenInternal(str.substring(pos, endPos), 'word');
         pos = endPos;
     }
-    
+
     function extractWhitespace() {
         var endPos = pos;
         while (' \t'.indexOf(str[++endPos]) !== -1);
         onTokenInternal(str.substring(pos, endPos), 'whitespace');
         pos = endPos;
     }
-    
+
     function extractChar() {
         var c = str.substr(pos, 1);
         onTokenInternal(c, c === '\n' ? 'newline' : 'char');
