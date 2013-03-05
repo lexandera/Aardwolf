@@ -18,6 +18,12 @@ var fs = require('fs');
 /* Verbose mode */
 config.verbose = false;
 
+/* Run the debug file server or not */
+config.runDebugServer = true;
+
+/* Run the offline rewriter process or not */
+config.runOfflineRewriter = false;
+
 /* Hostname or IP of the local machine */
 config.serverHost = ''; // Can be retrieved automatically or asked to the user
 

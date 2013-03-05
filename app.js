@@ -83,11 +83,15 @@ function startApp() {
 	var server = require('./server/server.js');
 	server.run();
 
-	var rewriterServer = require('./server/rewriter-server.js');
-	rewriterServer.run();
+	if (config.runDebugServer) {
+		var debugFileServer = require('./server/debug-file-server.js');
+		debugFileServer.run();
+	}
 
-	/*var debugFileServer = require('./server/debug-file-server.js');
-	 debugFileServer.run();*/
+	if (config.runOfflineRewriter) {
+		var rewriterServer = require('./server/rewriter-server.js');
+		rewriterServer.run();
+	}
 }
 
 
