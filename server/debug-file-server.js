@@ -12,6 +12,7 @@ var url = require('url');
 var config = require('../config/config.defaults.js');
 var util = require('./server-util.js');
 
+var multirewriter = require('../rewriter/multirewriter.js')
 
 function run() {
     if (!fs.existsSync(config.fileServerBaseDir)) {
@@ -30,6 +31,7 @@ function DebugFileServer(req, res) {
     var fileServerBaseDir = path.normalize(config.fileServerBaseDir);
     var fullRequestedFilePath = path.join(fileServerBaseDir, requestedFile);
 
+    
     /* alias for serving the debug library */
     if (requestedFile.toLowerCase() == '/aardwolf.js') {
         util.serveStaticFile(res, path.join(__dirname, '../js/aardwolf.js'));
@@ -39,19 +41,10 @@ function DebugFileServer(req, res) {
              fs.statSync(fullRequestedFilePath).isFile() &&
              fullRequestedFilePath.indexOf(fileServerBaseDir) === 0)
     {
-        var rewriter;
-        if (requestedFile.substr(-3) == '.js') {
-            rewriter = require('../rewriter/jsrewriter.js');
-        }
-        else if (requestedFile.substr(-7) == '.coffee') {
-            rewriter = require('../rewriter/coffeerewriter.js');
-        }
-
-        if (rewriter) {
-            var content = fs.readFileSync(fullRequestedFilePath).toString();
-            content = rewriter.addDebugStatements(requestedFile, content);
+        if (multirewriter.isRewritable(requestedFile)) {
+            var processedFile = multirewriter.getRewrittenContent(requestedFile);
             res.writeHead(200, {'Content-Type': 'application/javascript'});
-            res.end(content);
+            res.end(processedFile.file);
         }
         else {
             util.serveStaticFile(res, fullRequestedFilePath);

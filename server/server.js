@@ -12,6 +12,10 @@ var fs = require('fs');
 var config = require('../config/config.defaults.js');
 var util = require('./server-util.js');
 
+if (!config.breakpointCache) {
+    config.breakpointCache = {};
+}
+
 function run() {
     /* Server for web service ports and debugger UI */
     http.createServer(AardwolfServer).listen(config.serverPort, null, function() {
@@ -110,7 +114,7 @@ function AardwolfServer(req, res) {
                     /* File must exist and must be located inside the filesDir */
                     if (fs.existsSync(fullRequestedFilePath) && fullRequestedFilePath.indexOf(filesDir) === 0) {
                         ok200({ data: fs.readFileSync(fullRequestedFilePath).toString(),
-								breakpoints: config.breakpointCache[requestedFile] || []});
+                                breakpoints: config.breakpointCache[requestedFile] || []});
                         break;
                     }
                 }
