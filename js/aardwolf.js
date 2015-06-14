@@ -68,7 +68,7 @@ window.Aardwolf = new (function() {
             req.open('POST', serverUrl + '/mobile' + path, false);
             req.setRequestHeader('Content-Type', 'application/json');
 			if (path === '/breakpoint') {
-				req.timeout = 0;
+				//req.timeout = 0;
 			}
             req.send(JSON.stringify(payload));
 			if (!req.responseText) {

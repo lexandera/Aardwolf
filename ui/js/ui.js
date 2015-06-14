@@ -15,7 +15,7 @@ var clearOnConnect = true;
 var lineNum = 0;
 var evalBig = false;
 
-var history = [];
+var pmptHist = [];
 var currentHistoryPos = 0;
 
 $(function() {
@@ -72,10 +72,10 @@ $(function() {
 			case 38: // Up
 				if (!evalBig) {
 					e.preventDefault();
-					if (currentHistoryPos < history.length) {
-						$('#eval').val(history[currentHistoryPos++]);
+					if (currentHistoryPos < pmptHist.length) {
+						$('#eval').val(pmptHist[currentHistoryPos++]);
 
-						if (currentHistoryPos === history.length) {
+						if (currentHistoryPos === pmptHist.length) {
 							currentHistoryPos--;
 						}
 					}
@@ -85,9 +85,9 @@ $(function() {
 				if (!evalBig) {
 					e.preventDefault();
 					if (currentHistoryPos > 0) {
-						$('#eval').val(history[--currentHistoryPos]);
+						$('#eval').val(pmptHist[--currentHistoryPos]);
 					} else {
-						if ($('#eval').val() === history[currentHistoryPos]) {
+						if ($('#eval').val() === pmptHist[currentHistoryPos]) {
 							$('#eval').val('');
 						}
 					}
@@ -296,7 +296,7 @@ function evalCodeRemotely() {
 	var data =  $('#eval').val();
 
 	data = data.replace(/\bthis\b/, '__this');
-	history.unshift(data);
+	pmptHist.unshift(data);
 	currentHistoryPos = 0;
     postToServer({ command: 'eval', data: data});
 }
