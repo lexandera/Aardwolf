@@ -8,6 +8,7 @@ window.Aardwolf = new (function() {
     var serverHost = '__SERVER_HOST__';
     var serverPort = '__SERVER_PORT__';
     var serverUrl = 'http://' + serverHost + ':' + serverPort;
+	var fileServerUrl = 'http://' + serverHost + ':' + __FILE_SERVER_PORT__;
     var breakpoints = {};
     var shouldBreak = function() { return false; };
     var asyncXHR = null;
@@ -107,6 +108,19 @@ window.Aardwolf = new (function() {
         });
     }
 
+	this.scriptTag = function (parent,srcUrl) {
+		var script = document.createElement("script"),
+			newUrl = srcUrl;
+		
+		if (srcUrl && (breakpoints[srcUrl] || breakpoints['/'+ srcUrl])) 
+		{ 
+			newUrl = fileServerUrl + '/' + srcUrl;
+		}
+		
+		script.setAttribute("src", newUrl);
+		parent.appendChild(script);
+	}
+		
     function processCommand(cmd) {
         switch (cmd.command) {
 			case 'update-redirect-console':
@@ -121,7 +135,7 @@ window.Aardwolf = new (function() {
                         breakpoints[file] = {};
                     }
                     breakpoints[file][line] = true;
-                });
+                });				
                 return true;
 
             case 'breakpoint-continue':
