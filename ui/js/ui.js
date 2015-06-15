@@ -368,9 +368,28 @@ function listenToServer() {
 
 function showBreakpoint(data) {
     showFile(data);
+	showCallStack(data.stack);
     $('#file-switcher').val(data.file);
 }
 
+function showCallStack(stack)
+{
+	var ul = $('#callstack');
+	ul.empty();
+	
+
+	$(stack).each(function(i, frame) {
+		ul.append(
+			$('<li>')				
+				.append(
+					$('<span>')
+						.attr('class', 'breakpoint')
+						.text(frame)						
+				).append('<br>')								
+		);
+	});
+
+}
 function showFile(data) {
     var codeTokens = [];
     var keywordList;
