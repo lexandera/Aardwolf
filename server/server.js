@@ -15,7 +15,7 @@ var util = require('./server-util.js');
 function run() {
     /* Server for web service ports and debugger UI */
     http.createServer(AardwolfServer).listen(config.serverPort, null, function() {
-        console.log('Server listening for requests on port ' + config.serverPort + '.');
+        console.log('Server listening for Debugger UI and Command requests on port ' + config.serverPort + '.');
     });
 }
 
