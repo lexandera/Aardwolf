@@ -277,6 +277,7 @@ function updateBreakpoints() {
 						.append(breakpoint[0] + ':' + breakpoint[1])
 						.click(function() {
 							showFile({ file: breakpoint[0], goToLine: breakpoint[1]});
+							$('#file-switcher').val(breakpoint[0]);
 						})
 				)
 				.append('<br>')
