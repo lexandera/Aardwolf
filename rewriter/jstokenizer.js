@@ -84,6 +84,11 @@ function tokenize(str, onToken) {
     function extractString(quoteChar) {
         var endPos = pos;
         while (str[++endPos] != quoteChar) {
+			if (endPos >= str.length) 
+			{ 
+				extractChar(); 
+				return; 
+			}
             if (str[endPos] == '\\') {
                 ++endPos;
             }
