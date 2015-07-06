@@ -208,6 +208,9 @@ function loadSourceFiles() {
 	if (isAvailable) {
 		$('#file-switcher').val(prevSelected);
 	}
+		
+	$("#file-switcher").select2({  placeholder: "Select file" });
+	
 }
 
 function toggleRedirectConsole() {

@@ -120,7 +120,17 @@ window.Aardwolf = new (function() {
 		script.setAttribute("src", newUrl);
 		parent.appendChild(script);
 	}
+	
+	this.getScriptSrc = function (srcUrl) {
+		var newUrl = srcUrl;
 		
+		if (srcUrl && (breakpoints[srcUrl] || breakpoints['/'+ srcUrl])) 
+		{ 
+			newUrl = fileServerUrl + '/' + srcUrl;
+		}
+		return newUrl;
+	}
+	
     function processCommand(cmd) {
         switch (cmd.command) {
 			case 'update-redirect-console':
