@@ -1,0 +1,32 @@
+{
+  "name": "aardwolf-plus",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dekelcohen/Aardwolf",
+  "authors": [
+    "Aleksander Kmetec <aleksander.kmetec@gmail.com>. Javier López <jlopez@tid.es> Dekel Cohen <dekelcohen@gmail.com>"
+  ],
+  "description": "Aardwolf++ debugger",
+  "main": "ui/index.html",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "debug",
+    "debugger",
+    "javascript",
+    "mobile"
+  ],
+  "license": "Custom",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+	"jquery" : "~2.1.4"
+	"jqueryui" : "~1.11.4
+    "select2": "~4.0.0"
+  }
+}

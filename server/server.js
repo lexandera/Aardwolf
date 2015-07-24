@@ -15,7 +15,7 @@ var util = require('./server-util.js');
 function run() {
     /* Server for web service ports and debugger UI */
     http.createServer(AardwolfServer).listen(config.serverPort, null, function() {
-        console.log('Server listening for requests on port ' + config.serverPort + '.');
+        console.log('Server listening for Debugger UI and Command requests on port ' + config.serverPort + '.');
     });
 }
 
@@ -23,6 +23,9 @@ var mobileDispatcher = new Dispatcher();
 var desktopDispatcher = new Dispatcher();
 
 function AardwolfServer(req, res) {
+
+	console.log(req.url);
+	
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, Content-Type');
@@ -88,6 +91,15 @@ function AardwolfServer(req, res) {
                 break;
 
             default:
+				// Check if serve external library file
+				if (req.url.indexOf('/bower_components/') === 0) {
+					var fullRequestedFilePath = path.join(__dirname,'..', req.url);
+					console.log('External lib:' + fullRequestedFilePath);
+					if (fs.existsSync(fullRequestedFilePath))  {
+                        util.serveStaticFile(res, fullRequestedFilePath);
+                        break;
+                    }
+				}
                 /* check if we need to serve a UI file */
                 if (req.url.indexOf('/ui/') === 0) {
                     var requestedFile = req.url.substr(4);

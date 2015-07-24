@@ -4,9 +4,13 @@
         <title>Aardwolf UI</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.js"></script>
-        <script type="text/javascript" src="js/jstokenizer.js"></script>
+		<script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+		<script type="text/javascript" src="../bower_components/jquery-ui/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="../bower_components/select2/dist/js/select2.js"></script>
+		<link href="../bower_components/select2/dist/css/select2.css" rel="stylesheet" />
+	
+        
+		<script type="text/javascript" src="js/jstokenizer.js"></script>
         <script type="text/javascript" src="js/coffeetokenizer.js"></script>
         <script type="text/javascript" src="js/ui.js"></script>
 
@@ -31,9 +35,8 @@
 
             File:
 
-            <select id="file-switcher">
-            </select>
-
+            <select id="file-switcher" ></select>
+			
             <div id="options">
                 <input type="checkbox" id="clearConsoleConnect" checked>Clear console on restart <br />
                 <input type="checkbox" id="redirectConsole">Redirect remote console here
@@ -53,6 +56,8 @@
                 <button id="btn-clear-breakpoints" class="button small">clear breakpoints</button>
                 <button id="btn-breakon-next" class="button small">break on next</button>
                 <ul id="breakpoints"></ul>
+				<h2>Call Stack</h2>
+				<ul id="callstack"></ul>
             </div>
         </div>
 

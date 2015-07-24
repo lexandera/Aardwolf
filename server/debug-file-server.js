@@ -21,13 +21,14 @@ function run() {
     }
 
     http.createServer(DebugFileServer).listen(config.fileServerPort, null, function() {
-        console.log('File server listening for requests on port ' + config.fileServerPort + '.');
+        console.log('File server listening for requests on port ' + config.fileServerPort + ', on root: ' + config.fileServerBaseDir + '. It instruments the requested files.');
     });
 }
 
 
 function DebugFileServer(req, res) {
     var requestedFile = url.parse(req.url).pathname;
+	console.log(req.url);
     var fileServerBaseDir = path.normalize(config.fileServerBaseDir);
     var fullRequestedFilePath = path.join(fileServerBaseDir, requestedFile);
 
